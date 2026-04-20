@@ -1,8 +1,34 @@
 <html>
   <head>
-    <title>Hello, World!</title>
+    <title>Hello, Domestika!</title>
   </head>
   <body>
-    <h1>Hello, World!</h1>
+    <canvas width="600" height="600"></canvas>
+    <script>
+      // Create the canvas
+      let canvas = document.querySelector("canvas");
+      let context = canvas.getContext("2d");
+      // Write a sqaure, first setting the fill color
+      context.fillStyle = "aliceblue";
+      context.fillRect(100, 100, 400, 400);
+      // fillRect() is a shortcut for
+      // context.beginPath();
+      // context.rect(100,100,400,400);
+      // context.fill("aliceblue")
+      //
+      // Create another square with stroke
+      context.lineWidth = 4;
+      context.beginPath();
+      context.rect(100, 100, 400, 400);
+      context.stroke();
+      // Also has the shortcut
+      // context.strokeRect(100, 100, 400, 400);
+      //
+      // Create a circle now
+      context.beginPath();
+      context.arc(300, 300, 150, 0, Math.PI * 2);
+      // Arguments are: centerx, centery, start rad, end radiant
+      context.stroke();
+    </script>
   </body>
 </html>
