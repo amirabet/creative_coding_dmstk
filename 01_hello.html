@@ -6,11 +6,11 @@
     <canvas width="600" height="600"></canvas>
     <script>
       // Create the canvas
-      let canvas = document.querySelector("canvas");
-      let context = canvas.getContext("2d");
+      const canvas = document.querySelector("canvas");
+      const context = canvas.getContext("2d");
       // Write a sqaure, first setting the fill color
       context.fillStyle = "aliceblue";
-      context.fillRect(100, 100, 400, 400);
+      context.fillRect(90, 90, 420, 420);
       // fillRect() is a shortcut for
       // context.beginPath();
       // context.rect(100,100,400,400);
@@ -19,16 +19,40 @@
       // Create another square with stroke
       context.lineWidth = 4;
       context.beginPath();
-      context.rect(100, 100, 400, 400);
+      context.rect(90, 90, 420, 420);
       context.stroke();
       // Also has the shortcut
       // context.strokeRect(100, 100, 400, 400);
       //
       // Create a circle now
       context.beginPath();
-      context.arc(300, 300, 150, 0, Math.PI * 2);
+      context.arc(300, 300, 130, 0, Math.PI * 2);
       // Arguments are: centerx, centery, start rad, end radiant
       context.stroke();
+      //
+      //Arrays playing
+      const width = 60;
+      const height = 60;
+      const gap = 20;
+      let x, y;
+      for (let i = 0; i < 5; i++) {
+        for (let j = 0; j < 5; j++) {
+          // nested loop too
+          // Vars inside array
+          x = 110 + (width + gap) * i;
+          y = 110 + (width + gap) * j;
+          // Let's paint!
+          context.beginPath();
+          context.rect(x, y, width, height);
+          context.stroke();
+          // Small squares iside conditionally
+          if (Math.random() > 0.5) {
+            context.beginPath();
+            context.rect(x + 8, y + 8, width - 16, height - 16);
+            context.stroke();
+          }
+        }
+      }
     </script>
   </body>
 </html>
