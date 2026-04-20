@@ -8,11 +8,13 @@ const settings = {
 
 const sketch = () => {
   return ({ context, width, height }) => {
-    context.fillStyle = "white";
+    // Practice 2.1 invert canvas colors
+    //context.fillStyle = "white";
+    context.fillStyle = "black";
     context.fillRect(0, 0, width, height);
 
     // Previous loop from erxercise 1
-    const w = 60; // Could use percentages, for emxample width * 0.1;
+    const w = 60; // Could use percentages, for example width * 0.1;
     const h = 60;
     const gap = 20;
     let x, y;
@@ -22,6 +24,10 @@ const sketch = () => {
         y = 110 + (h + gap) * j;
         context.beginPath();
         context.rect(x, y, w, h);
+        context.lineWidth = 5;
+        // Practice 2.1 invert canvas colors
+        //context.strokeStyle = "black";
+        context.strokeStyle = "white";
         context.stroke();
         if (Math.random() > 0.5) {
           context.beginPath();
