@@ -1,11 +1,14 @@
 const canvasSketch = require("canvas-sketch");
-
+const math = require("canvas-sketch-util/math");
+const random = require("canvas-sketch-util/random");
 const settings = {
   dimensions: [1080, 1080],
 };
-
-const degToRad = (angle) => (angle * Math.PI) / 180;
-console.log(degToRad(180));
+//
+// Utility functions
+// Not used since we are using now canvas-skecth-util
+// const degToRad = (angle) => (angle * Math.PI) / 180;
+// const randomRange = (min, max) => Math.random() * (max - min) + min;
 
 const sketch = () => {
   return ({ context, width, height }) => {
@@ -24,7 +27,7 @@ const sketch = () => {
     //
     // Make now the hours indicators
     const slices = 12;
-    const slice = degToRad(360 / slices);
+    const slice = math.degToRad(360 / slices);
     //
     // Using trigonometry of place each hour indicator around the external circle
     const radius = width * 0.3;
@@ -49,6 +52,13 @@ const sketch = () => {
       //context.rotate(degToRad(45));
       // Rotating with negative angle to position hour marker
       context.rotate(-angle);
+      //
+      // We're gonna scale the canvas to add randomness
+      // It will only affect the current hour markes
+      // since we're restoring the context below
+      //context.scale(Math.max(0.4, Math.random()) * 3, 1);
+      // Using helper function
+      context.scale(random.range(1, 3), 1);
       //
       // Paint the square
       context.beginPath();
