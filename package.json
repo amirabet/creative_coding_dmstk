@@ -1,0 +1,10 @@
+{
+  "name": "creative_coding_dmstk",
+  "version": "1.0.0",
+  "description": "Creative Coding Course by DOMESTIKA",
+  "license": "ISC",
+  "dependencies": {
+    "canvas-sketch": "^0.7.7",
+    "canvas-sketch-util": "^1.10.0"
+  }
+}
