@@ -15,8 +15,18 @@ const color_highlight = "red";
 // const degToRad = (angle) => (angle * Math.PI) / 180;
 // const randomRange = (min, max) => Math.random() * (max - min) + min;
 //
+// Randomized vars
+let scale_x, scale_y;
+let rect_y;
+let arc_lineWidth, arc_radio, arc_start, arc_end;
 const sketch = () => {
+  const date = new Date();
+  const secs = date.getSeconds();
+  const mins = date.getMinutes();
+  const hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
+  const redraw = secs === 0;
   return ({ context, width, height }) => {
+    console.log("sketch");
     context.fillStyle = color_background;
     context.fillRect(0, 0, width, height);
     // The square to distort
@@ -30,11 +40,11 @@ const sketch = () => {
     const w = width * 0.01;
     const h = height * 0.1;
     //
-    // Make now the hours indicators
+    // Make now the slices
     const slices = 36;
     const slice = math.degToRad(360 / slices);
     //
-    // Using trigonometry of place each hour indicator around the external circle
+    // Using trigonometry of place each slice around the external circle
     const radius = width * 0.3;
     let x, y;
     // With a loop
@@ -63,13 +73,20 @@ const sketch = () => {
       // since we're restoring the context below
       //context.scale(Math.max(0.4, Math.random()) * 3, 1);
       // Using helper function
-      context.scale(random.range(0.1, 2), random.range(0.2, 0.8));
+      if (!scale_x || redraw) {
+        scale_x = random.range(0.1, 2);
+        scale_y = random.range(0.2, 0.8);
+      }
+      context.scale(scale_x, scale_y);
       //
       // Paint the square
       context.beginPath();
       // Paint the square accounting the translate
       // and put the center of the square in the middle of the rotation
-      context.rect(-w * 0.5, random.range(0, -h * 0.5), w, h);
+      if (!rect_y || redraw) {
+        rect_y = random.range(0, -h * 0.5);
+      }
+      context.rect(-w * 0.5, rect_y, w, h);
       context.fill();
       // Recover the prevoius canvas state (before translate)
       context.restore();
@@ -80,16 +97,18 @@ const sketch = () => {
       context.translate(cx, cy);
       context.rotate(-angle);
       // Paint the arcs
-      context.lineWidth = random.range(5, 20);
+      if (!arc_lineWidth || redraw) {
+        arc_lineWidth = random.range(5, 20);
+      }
+      context.lineWidth = arc_lineWidth;
       context.strokeStyle = color_elements;
       context.beginPath();
-      context.arc(
-        0,
-        0,
-        radius * random.range(0.7, 1.3),
-        slice * random.range(1, -8),
-        slice * random.range(1, 5),
-      );
+      if (!arc_radio || redraw) {
+        arc_radio = radius * random.range(0.7, 1.3);
+        arc_start = slice * random.range(1, -8);
+        arc_end = slice * random.range(1, 5);
+      }
+      context.arc(0, 0, arc_radio, arc_start, arc_end);
       context.stroke();
 
       context.restore();
@@ -102,7 +121,23 @@ const sketch = () => {
     // context.beginPath();
     // context.arc(0, 0, 50, 0, Math.PI * 2);
     // context.fill();
+    //
+    // Paint the secs
+    console.log(secs);
+    context.save();
+    context.translate(cx, cy);
+    context.lineWidth = 20;
+    context.strokeStyle = color_highlight;
+    context.beginPath();
+    context.arc(0, 0, w * 0.3, 0, math.degToRad(secs * 12));
+    context.stroke();
+
+    context.restore();
   };
 };
 
 canvasSketch(sketch, settings);
+
+//
+// Start the clock
+setInterval(sketch, 1000);
