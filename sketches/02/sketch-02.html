@@ -71,7 +71,10 @@
             random_vars[i].scale_x = randomRange(0.1, 2);
             random_vars[i].scale_y = randomRange(0.2, 0.8);
             random_vars[i].rect_y = randomRange(0, -h * 0.5);
-            random_vars[i].arc_lineWidth = randomRange(5, 20);
+            random_vars[i].arc_lineWidth = randomRange(
+              width * 0.005,
+              width * 0.019,
+            );
             random_vars[i].arc_radio = radius * randomRange(0.7, 1.3);
             random_vars[i].arc_start = slice * randomRange(-8, 1);
             random_vars[i].arc_end = slice * randomRange(1, 5);
@@ -106,7 +109,7 @@
         context.save();
         context.translate(cx, cy);
         context.rotate(degToRad(-90));
-        context.lineWidth = 14;
+        context.lineWidth = width * 0.013;
         context.strokeStyle = color_highlight;
         context.beginPath();
         context.arc(0, 0, width * 0.16, 0, degToRad(secs * 6));
@@ -126,7 +129,7 @@
           context.translate(cx, cy);
           context.rotate(-angle);
           context.beginPath();
-          context.rect(-w * 0.1, 2, w * 1, h * 2.1);
+          context.rect(-w * 0.1, height * 0.002, w * 1, h * 2.1);
           context.fill();
           context.restore();
         }
