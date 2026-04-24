@@ -150,7 +150,7 @@ canvasSketch(() => {
     context.stroke();
     // Hours
     context.beginPath();
-    context.arc(0, 0, width * 018, 0, math.degToRad(hours * 30));
+    context.arc(0, 0, width * 0.18, 0, math.degToRad(hours * 30));
     context.stroke();
     //
     context.restore();
