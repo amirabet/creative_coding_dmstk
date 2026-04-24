@@ -3,6 +3,9 @@ const math = require("canvas-sketch-util/math");
 const random = require("canvas-sketch-util/random");
 const settings = {
   dimensions: [1080, 1080],
+  animate: true,
+  fps: 1,
+  playbackRate: "throttle",
 };
 //
 // Colors
@@ -16,17 +19,16 @@ const color_highlight = "red";
 // const randomRange = (min, max) => Math.random() * (max - min) + min;
 //
 // Randomized vars
-let scale_x, scale_y;
-let rect_y;
-let arc_lineWidth, arc_radio, arc_start, arc_end;
-const sketch = () => {
-  const date = new Date();
-  const secs = date.getSeconds();
-  const mins = date.getMinutes();
-  const hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
-  const redraw = secs === 0;
-  return ({ context, width, height }) => {
-    console.log("sketch");
+let random_vars = [];
+canvasSketch(() => {
+  return ({ context, width, height, playhead }) => {
+    const date = new Date();
+    const secs = date.getSeconds();
+    const mins = date.getMinutes();
+    const hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
+    const redraw = secs === 0;
+    //console.log("frame " + secs);
+    // Canvas background
     context.fillStyle = color_background;
     context.fillRect(0, 0, width, height);
     // The square to distort
@@ -73,20 +75,23 @@ const sketch = () => {
       // since we're restoring the context below
       //context.scale(Math.max(0.4, Math.random()) * 3, 1);
       // Using helper function
-      if (!scale_x || redraw) {
-        scale_x = random.range(0.1, 2);
-        scale_y = random.range(0.2, 0.8);
+      if (!random_vars[i] || redraw) {
+        if (!random_vars[i]) {
+          random_vars[i] = {};
+        }
+        random_vars[i].scale_x = random.range(0.1, 2);
+        random_vars[i].scale_y = random.range(0.2, 0.8);
       }
-      context.scale(scale_x, scale_y);
+      context.scale(random_vars[i].scale_x, random_vars[i].scale_y);
       //
       // Paint the square
       context.beginPath();
       // Paint the square accounting the translate
       // and put the center of the square in the middle of the rotation
-      if (!rect_y || redraw) {
-        rect_y = random.range(0, -h * 0.5);
+      if (!random_vars[i].rect_y || redraw) {
+        random_vars[i].rect_y = random.range(0, -h * 0.5);
       }
-      context.rect(-w * 0.5, rect_y, w, h);
+      context.rect(-w * 0.5, random_vars[i].rect_y, w, h);
       context.fill();
       // Recover the prevoius canvas state (before translate)
       context.restore();
@@ -97,18 +102,24 @@ const sketch = () => {
       context.translate(cx, cy);
       context.rotate(-angle);
       // Paint the arcs
-      if (!arc_lineWidth || redraw) {
-        arc_lineWidth = random.range(5, 20);
+      if (!random_vars[i].arc_lineWidth || redraw) {
+        random_vars[i].arc_lineWidth = random.range(5, 20);
       }
-      context.lineWidth = arc_lineWidth;
+      context.lineWidth = random_vars[i].arc_lineWidth;
       context.strokeStyle = color_elements;
       context.beginPath();
-      if (!arc_radio || redraw) {
-        arc_radio = radius * random.range(0.7, 1.3);
-        arc_start = slice * random.range(1, -8);
-        arc_end = slice * random.range(1, 5);
+      if (!random_vars[i].arc_radio || redraw) {
+        random_vars[i].arc_radio = radius * random.range(0.7, 1.3);
+        random_vars[i].arc_start = slice * random.range(1, -8);
+        random_vars[i].arc_end = slice * random.range(1, 5);
       }
-      context.arc(0, 0, arc_radio, arc_start, arc_end);
+      context.arc(
+        0,
+        0,
+        random_vars[i].arc_radio,
+        random_vars[i].arc_start,
+        random_vars[i].arc_end,
+      );
       context.stroke();
 
       context.restore();
@@ -123,21 +134,38 @@ const sketch = () => {
     // context.fill();
     //
     // Paint the secs
-    console.log(secs);
     context.save();
     context.translate(cx, cy);
-    context.lineWidth = 20;
+    context.rotate(math.degToRad(-90));
+    context.lineWidth = 14;
     context.strokeStyle = color_highlight;
     context.beginPath();
-    context.arc(0, 0, w * 0.3, 0, math.degToRad(secs * 12));
+    context.arc(0, 0, width * 0.16, 0, math.degToRad(secs * 6));
     context.stroke();
-
+    // Mins
+    context.beginPath();
+    context.arc(0, 0, width * 0.18, 0, math.degToRad(mins * 6));
+    context.stroke();
+    // Hours
+    context.beginPath();
+    context.arc(0, 0, width * 0.2, 0, math.degToRad(hours * 30));
+    context.stroke();
+    //
     context.restore();
+    //
+    // Paint line dividers for hours
+    for (let i = 0; i < 12; i++) {
+      const angle = math.degToRad(360 / 12) * i;
+      //   x = cx + radius * Math.sin(angle);
+      //   y = cy + radius * Math.cos(angle);
+      context.save();
+      context.fillStyle = color_background;
+      context.translate(cx, cy);
+      context.rotate(-angle);
+      context.beginPath();
+      context.rect(-w * 0.1, 2, w * 1, h * 2.1);
+      context.fill();
+      context.restore();
+    }
   };
-};
-
-canvasSketch(sketch, settings);
-
-//
-// Start the clock
-setInterval(sketch, 1000);
+}, settings);
