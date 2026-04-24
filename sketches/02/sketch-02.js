@@ -140,15 +140,15 @@ canvasSketch(() => {
     context.lineWidth = 14;
     context.strokeStyle = color_highlight;
     context.beginPath();
-    context.arc(0, 0, width * 0.16, 0, math.degToRad(secs * 6));
+    context.arc(0, 0, width * 0.14, 0, math.degToRad(secs * 6));
     context.stroke();
     // Mins
     context.beginPath();
-    context.arc(0, 0, width * 0.18, 0, math.degToRad(mins * 6));
+    context.arc(0, 0, width * 0.16, 0, math.degToRad(mins * 6));
     context.stroke();
     // Hours
     context.beginPath();
-    context.arc(0, 0, width * 0.2, 0, math.degToRad(hours * 30));
+    context.arc(0, 0, width * 018, 0, math.degToRad(hours * 30));
     context.stroke();
     //
     context.restore();

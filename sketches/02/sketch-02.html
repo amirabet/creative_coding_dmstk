@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+	<!-- https://codepen.io/amirabet/pen/pvEMJQo -->
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,7 +12,7 @@
         box-sizing: border-box;
       }
       body {
-        background: #111;
+        background: #000;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -112,13 +113,13 @@
         context.lineWidth = width * 0.013;
         context.strokeStyle = color_highlight;
         context.beginPath();
-        context.arc(0, 0, width * 0.16, 0, degToRad(secs * 6));
+        context.arc(0, 0, width * 0.14, 0, degToRad(secs * 6));
         context.stroke();
         context.beginPath();
-        context.arc(0, 0, width * 0.18, 0, degToRad(mins * 6));
+        context.arc(0, 0, width * 0.16, 0, degToRad(mins * 6));
         context.stroke();
         context.beginPath();
-        context.arc(0, 0, width * 0.2, 0, degToRad(hours * 30));
+        context.arc(0, 0, width * 0.18, 0, degToRad(hours * 30));
         context.stroke();
         context.restore();
 
