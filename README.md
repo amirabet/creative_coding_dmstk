@@ -51,3 +51,15 @@ npx canvas-sketch sketches/02/sketch-02.js --open
 > ⚠️ Do **not** run `canvas-sketch` from inside a `sketches/01/` or `sketches/02/` subfolder.
 
 This will open the sketch in your browser with hot-reloading enabled.
+
+## Troubleshooting
+
+### Sketch 04 and Tweakpane
+
+`sketches/04/sketch-04.js` uses `canvas-sketch` with the CommonJS/browserify pipeline. `tweakpane@4` is ESM-only, so if Sketch 04 installs that version the bundler fails with:
+
+```text
+ParseError: 'import' and 'export' may appear only with 'sourceType: module'
+```
+
+For this reason, `sketches/04/package.json` is pinned to `tweakpane@^3.1.10`, which is compatible with the current sketch setup. If Sketch 04 is later migrated to a full ESM workflow or browser-native imports, the Tweakpane dependency can be upgraded again.

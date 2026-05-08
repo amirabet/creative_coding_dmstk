@@ -1,9 +1,29 @@
 # Changelog
 
+<!-- markdownlint-disable MD024 -->
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [5.0.0] - 2026-05-08
+
+### Added
+
+- `sketches/04/sketch-04.js` — fourth canvas-sketch exercise rendering an animated noise-driven line grid with Tweakpane controls for grid density, noise, frame control, line caps, and colors
+- `sketches/04/package.json` — per-sketch npm manifest for sketch 04 with local `canvas-sketch`, `canvas-sketch-util`, and `tweakpane` dependencies
+- `sketches/04/package-lock.json` — lockfile for sketch 04 local dependency installation
+
+### Changed
+
+- `sketches/04/sketch-04.js` — replaced the basic static line grid with an animated 3D-noise composition that maps noise values to line rotation and stroke width
+- `sketches/04/sketch-04.js` — added interactive render controls for animation toggle, manual frame scrubbing, noise frequency/amplitude, line cap style, and foreground/background colors
+- `README.md` — documented the Sketch 04 Tweakpane module compatibility issue and the required dependency version
+
+### Fixed
+
+- `sketches/04/package.json` — pinned `tweakpane` to `^3.1.10` because `tweakpane@4` is ESM-only and causes `ParseError: 'import' and 'export' may appear only with 'sourceType: module'` in the current `canvas-sketch` CommonJS/browserify setup
 
 ## [4.0.0] - 2026-06-04
 
