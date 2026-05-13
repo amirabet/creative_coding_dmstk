@@ -4,23 +4,40 @@ Creative Coding Course by DOMESTIKA
 
 [Link to the course](https://www.domestika.org/es/courses/2729-codificacion-creativa-crea-piezas-visuales-con-javascript/course)
 
+This README reflects the next major iteration of the project layout: five sketches, per-sketch npm manifests, and sketch-specific runtime dependencies where needed.
+
 ## Project Structure
 
-```
+```text
 creative_coding_dmstk/
-├── package.json          # Single shared dependencies for all sketches
-├── node_modules/
+├── package.json
+├── CHANGELOG.md
+├── README.md
+├── 01_hello.html
 ├── sketches/
 │   ├── 01/
+│   │   ├── package.json
 │   │   └── sketch-01.js
-│   └── 02/
-│       └── sketch-02.js
-└── 01_hello.html
+│   ├── 02/
+│   │   ├── package.json
+│   │   ├── sketch-02.html
+│   │   └── sketch-02.js
+│   ├── 03/
+│   │   ├── package.json
+│   │   └── sketch-03.js
+│   ├── 04/
+│   │   ├── package.json
+│   │   └── sketch-04.js
+│   └── 05/
+│       ├── package.json
+│       └── sketch-05.js
 ```
+
+Each sketch folder is now self-contained enough to install and run independently.
 
 ## Dependencies
 
-All dependencies are managed from the root `package.json`.
+The root [package.json](package.json) still holds shared course dependencies, but each sketch folder also has its own local `package.json` so the sketches can be installed and run locally.
 
 ### canvas-sketch
 
@@ -30,27 +47,52 @@ All dependencies are managed from the root `package.json`.
 
 [canvas-sketch-util](https://github.com/mattdesl/canvas-sketch-util) (`^1.10.0`) — utility functions for creative coding, including math helpers, color tools, and random number generation.
 
+### tweakpane
+
+[tweakpane](https://github.com/cocopon/tweakpane) (`^3.1.10` in Sketch 04 only) — UI controls for interactive parameters in [sketches/04/sketch-04.js](sketches/04/sketch-04.js).
+
 ## Installation
 
-From the project root, run:
+Install the root dependencies once:
 
 ```bash
 npm install
 ```
 
-## Running a Sketch
-
-Always run `canvas-sketch` from the **project root**. It uses webpack to bundle sketches, and webpack resolves modules from the directory where the command is executed. Running from a sketch subfolder will cause errors like `Cannot find module 'canvas-sketch-util/math'` because `node_modules/` lives at the root.
+Then install dependencies inside any sketch you want to run:
 
 ```bash
-# From the project root:
-npx canvas-sketch sketches/01/sketch-01.js --open
-npx canvas-sketch sketches/02/sketch-02.js --open
+cd sketches/05
+npm install
 ```
 
-> ⚠️ Do **not** run `canvas-sketch` from inside a `sketches/01/` or `sketches/02/` subfolder.
+## Running a Sketch
+
+Run `canvas-sketch` from the sketch folder you want to work on so it resolves that sketch's local dependencies.
+
+```bash
+# From a sketch folder:
+cd sketches/01
+npx canvas-sketch sketch-01.js --open
+
+cd ../04
+npx canvas-sketch sketch-04.js --open
+
+cd ../05
+npx canvas-sketch sketch-05.js --open
+```
+
+If you are switching between sketches regularly, treat each `sketches/0N/` directory as its own small workspace for install and run commands.
 
 This will open the sketch in your browser with hot-reloading enabled.
+
+## Current Sketches
+
+- Sketch 01: introductory canvas-sketch exercise
+- Sketch 02: animated clock composition using arcs, transforms, and time-based redraws
+- Sketch 03: animated agents with vector motion and proximity-based line connections
+- Sketch 04: animated noise-driven line grid with Tweakpane controls
+- Sketch 05: typography-based experiment using an offscreen canvas and keyboard input
 
 ## Troubleshooting
 

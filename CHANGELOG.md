@@ -7,6 +7,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.0.0] - 2026-05-13
+
+### Added
+
+- `sketches/05/sketch-05.js` — fifth canvas-sketch exercise rendering a typography-based composition from an offscreen canvas and per-cell color sampling, with keyboard input to swap the displayed character
+- `sketches/05/package.json` — per-sketch npm manifest for sketch 05 with local `canvas-sketch` dependency
+- `sketches/05/package-lock.json` — lockfile for sketch 05 local dependency installation
+
 ## [5.0.0] - 2026-05-08
 
 ### Added
