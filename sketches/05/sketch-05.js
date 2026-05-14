@@ -1,4 +1,5 @@
 const canvasSketch = require("canvas-sketch");
+const random = require("canvas-sketch-util/random");
 
 const settings = {
   dimensions: [1080, 1080],
@@ -6,11 +7,26 @@ const settings = {
 
 // Global vars
 let manager;
-let text = "Ç";
+let text = "A";
 let fontSize = 1200;
 let fontFamily = "serif";
 
-// Create a new econdary canvas to render the character / type
+const backgroundColor = "black";
+const typeColor = "white";
+
+// Use Image or text?
+const useImage = true;
+const imageUrl = "github_logo.webp";
+const loadSomeImage = (imageUrl) => {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject();
+    image.src = imageUrl;
+  });
+};
+
+// Create a new secondary canvas to render the character / type
 const typeCanvas = document.createElement("canvas");
 const typeContext = typeCanvas.getContext("2d");
 
@@ -28,13 +44,13 @@ const sketch = ({ context, width, height }) => {
     // In this render function, we replaced this canvas context
     // for typeContext of the 2ary canvas' context
     // We also replace width by cols and heigh by rows
-    typeContext.fillStyle = "azure";
+    typeContext.fillStyle = backgroundColor;
     typeContext.fillRect(0, 0, cols, rows);
 
-    fontSize = cols;
+    fontSize = cols * 1.2;
 
     // Let's create the text!
-    typeContext.fillStyle = "lightBlue";
+    typeContext.fillStyle = typeColor;
     typeContext.font = `${fontSize}px ${fontFamily}`;
     typeContext.textBaseline = "top"; //"middle"; =< without TextMetrics
     //typeContexttextAlign = "center";
@@ -62,13 +78,35 @@ const sketch = ({ context, width, height }) => {
     // typeContextrect(mx, my, mw, mh);
     // typeContextstroke();
 
-    typeContext.fillText(text, 0, 0);
+    // Working with text or image
+    if (!useImage) typeContext.fillText(text, 0, 0);
+    else {
+      console.log(loadedImg);
+      typeContext.drawImage(
+        loadedImg,
+        0,
+        0,
+        typeCanvas.width,
+        typeCanvas.height,
+      );
+    }
+
     typeContext.restore();
 
     // Draw the secondary canvas inside this canvas
     // First getThedata: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/getImageData
     const typeData = typeContext.getImageData(0, 0, cols, rows).data;
+    //
+    // Invert Colors
+    context.fillStyle = backgroundColor;
+    context.fillRect(0, 0, width, height);
+    //
+    context.textBaseline = "middle";
+    context.textAlign = "center";
+    //
+    // For testing we can print the secondary canvas on the top left corner
     context.drawImage(typeCanvas, 0, 0);
+    //
     // Loop through Image Data: it contains RGBA info on each pixel
     // For each pixel we read data and paint the sqare accordingly
     for (let i = 0; i < numCells; i++) {
@@ -83,21 +121,45 @@ const sketch = ({ context, width, height }) => {
       const b = typeData[i * 4 + 2];
       const a = typeData[i * 4 + 3];
 
-      context.fillStyle = `rgb(${r}, ${g}, ${b})`;
+      const glyph = getGlyphByIntensity(r);
+
+      //context.fillStyle = `rgb(${r}, ${g}, ${b})`;
+      context.fillStyle = typeColor; // Paint in plain color
+
+      context.font = `${cell * 2}px ${fontFamily}`;
+      if (Math.random() < 0.1) context.font = `${cell * 6}px ${fontFamily}`;
 
       context.save();
       context.translate(x, y);
       //context.fillRect(0, 0, cell, cell);
       //
       // We can also paint circles!
-      context.translate(cell * 0.5, cell * 0.5);
-      context.beginPath();
-      context.arc(0, 0, cell * 0.5, 0, Math.PI * 2);
-      context.fill();
+      //   context.translate(cell * 0.5, cell * 0.5);
+      //   context.beginPath();
+      //   context.arc(0, 0, cell * 0.5, 0, Math.PI * 2);
+      //   context.fill();
       //
+      // But finally we will use glyhps!
+      context.fillText(glyph, 0, 0);
       context.restore();
     }
+    // Draw Image one more time to set as background (not beauty, removed)
+    //context.globalAlpha = 0.3;
+    //context.drawImage(typeCanvas, 0, 0, width, height);
   };
+};
+
+// Get the glyph by a colorChannel value (0 to 255)
+const getGlyphByIntensity = (intensity) => {
+  if (intensity < 50) return "";
+  if (intensity < 100) return ".";
+  if (intensity < 150) return "+";
+  if (intensity < 200) return "*";
+
+  const glyphs = "|~¬-_=·/<>".split("");
+
+  if (Math.random() < 0.8) return random.pick(glyphs);
+  return text;
 };
 
 // Listen to keboad events using Asyc
@@ -111,6 +173,10 @@ document.addEventListener("keyup", onKeyUp);
 
 // Make a canvas-skecth call async
 const start = async () => {
+  await loadSomeImage(imageUrl).then((img) => {
+    loadedImg = img;
+    console.log(loadedImg.src);
+  });
   manager = await canvasSketch(sketch, settings);
 };
 start();
