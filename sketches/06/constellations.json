@@ -1,0 +1,539 @@
+{
+  "constellations": {
+    "Ursa Major": {
+      "stars": [
+        {
+          "name": "Dubhe",
+          "coordinates": { "x": 0.42, "y": 0.62 },
+          "brightness": 9,
+          "size": 9
+        },
+        {
+          "name": "Merak",
+          "coordinates": { "x": 0.45, "y": 0.65 },
+          "brightness": 8,
+          "size": 8
+        },
+        {
+          "name": "Phecda",
+          "coordinates": { "x": 0.48, "y": 0.67 },
+          "brightness": 7,
+          "size": 7
+        },
+        {
+          "name": "Megrez",
+          "coordinates": { "x": 0.46, "y": 0.6 },
+          "brightness": 6,
+          "size": 6
+        },
+        {
+          "name": "Alioth",
+          "coordinates": { "x": 0.49, "y": 0.59 },
+          "brightness": 9,
+          "size": 9
+        },
+        {
+          "name": "Mizar",
+          "coordinates": { "x": 0.51, "y": 0.6 },
+          "brightness": 8,
+          "size": 8
+        },
+        {
+          "name": "Alkaid",
+          "coordinates": { "x": 0.54, "y": 0.62 },
+          "brightness": 8,
+          "size": 8
+        },
+        {
+          "name": "Talitha",
+          "coordinates": { "x": 0.34, "y": 0.28 },
+          "brightness": 5,
+          "size": 5
+        },
+        {
+          "name": "Tania Australis",
+          "coordinates": { "x": 0.38, "y": 0.26 },
+          "brightness": 5,
+          "size": 5
+        },
+        {
+          "name": "Tania Borealis",
+          "coordinates": { "x": 0.42, "y": 0.27 },
+          "brightness": 5,
+          "size": 5
+        },
+        {
+          "name": "Muscida",
+          "coordinates": { "x": 0.3, "y": 0.34 },
+          "brightness": 4,
+          "size": 4
+        },
+        {
+          "name": "Alcor",
+          "coordinates": { "x": 0.505, "y": 0.405 },
+          "brightness": 5,
+          "size": 4
+        }
+      ],
+      "lines": [
+        ["Dubhe", "Merak"],
+        ["Merak", "Phecda"],
+        ["Phecda", "Megrez"],
+        ["Megrez", "Dubhe"],
+        ["Megrez", "Alioth"],
+        ["Alioth", "Mizar"],
+        ["Mizar", "Alkaid"],
+        ["Dubhe", "Talitha"],
+        ["Talitha", "Tania Australis"],
+        ["Tania Australis", "Tania Borealis"],
+        ["Tania Borealis", "Megrez"],
+        ["Merak", "Muscida"],
+        ["Mizar", "Alcor"]
+      ]
+    },
+
+    "Ursa Minor": {
+      "stars": [
+        {
+          "name": "Polaris",
+          "coordinates": { "x": 0.5, "y": 0.515 },
+          "brightness": 10,
+          "size": 10
+        },
+        {
+          "name": "Kochab",
+          "coordinates": { "x": 0.47, "y": 0.56 },
+          "brightness": 8,
+          "size": 8
+        },
+        {
+          "name": "Pherkad",
+          "coordinates": { "x": 0.53, "y": 0.565 },
+          "brightness": 7,
+          "size": 7
+        },
+        {
+          "name": "Yildun",
+          "coordinates": { "x": 0.485, "y": 0.54 },
+          "brightness": 6,
+          "size": 6
+        }
+      ],
+      "lines": [
+        ["Polaris", "Yildun"],
+        ["Yildun", "Kochab"],
+        ["Kochab", "Pherkad"]
+      ]
+    },
+
+    "Cassiopeia": {
+      "stars": [
+        {
+          "name": "Caph",
+          "coordinates": { "x": 0.55, "y": 0.4 },
+          "brightness": 7,
+          "size": 7
+        },
+        {
+          "name": "Schedar",
+          "coordinates": { "x": 0.52, "y": 0.42 },
+          "brightness": 9,
+          "size": 9
+        },
+        {
+          "name": "Gamma Cas",
+          "coordinates": { "x": 0.5, "y": 0.38 },
+          "brightness": 8,
+          "size": 8
+        },
+        {
+          "name": "Ruchbah",
+          "coordinates": { "x": 0.47, "y": 0.4 },
+          "brightness": 7,
+          "size": 7
+        },
+        {
+          "name": "Segin",
+          "coordinates": { "x": 0.45, "y": 0.42 },
+          "brightness": 6,
+          "size": 6
+        }
+      ],
+      "lines": [
+        ["Caph", "Schedar"],
+        ["Schedar", "Gamma Cas"],
+        ["Gamma Cas", "Ruchbah"],
+        ["Ruchbah", "Segin"]
+      ]
+    },
+
+    "Orion": {
+      "stars": [
+        {
+          "name": "Betelgeuse",
+          "coordinates": { "x": 0.72, "y": 0.42 },
+          "brightness": 10,
+          "size": 10
+        },
+        {
+          "name": "Bellatrix",
+          "coordinates": { "x": 0.78, "y": 0.42 },
+          "brightness": 8,
+          "size": 8
+        },
+        {
+          "name": "Alnitak",
+          "coordinates": { "x": 0.7, "y": 0.52 },
+          "brightness": 8,
+          "size": 8
+        },
+        {
+          "name": "Alnilam",
+          "coordinates": { "x": 0.73, "y": 0.54 },
+          "brightness": 9,
+          "size": 9
+        },
+        {
+          "name": "Mintaka",
+          "coordinates": { "x": 0.76, "y": 0.52 },
+          "brightness": 8,
+          "size": 8
+        },
+        {
+          "name": "Saiph",
+          "coordinates": { "x": 0.7, "y": 0.62 },
+          "brightness": 7,
+          "size": 7
+        },
+        {
+          "name": "Rigel",
+          "coordinates": { "x": 0.76, "y": 0.62 },
+          "brightness": 10,
+          "size": 10
+        },
+        {
+          "name": "Meissa",
+          "coordinates": { "x": 0.74, "y": 0.36 },
+          "brightness": 6,
+          "size": 6
+        }
+      ],
+      "lines": [
+        ["Betelgeuse", "Bellatrix"],
+        ["Betelgeuse", "Alnitak"],
+        ["Bellatrix", "Mintaka"],
+        ["Alnitak", "Alnilam"],
+        ["Alnilam", "Mintaka"],
+        ["Alnitak", "Saiph"],
+        ["Mintaka", "Rigel"],
+        ["Saiph", "Rigel"],
+        ["Betelgeuse", "Meissa"],
+        ["Bellatrix", "Meissa"]
+      ]
+    },
+
+    "Cygnus": {
+      "stars": [
+        {
+          "name": "Deneb",
+          "coordinates": { "x": 0.35, "y": 0.42 },
+          "brightness": 10,
+          "size": 10
+        },
+        {
+          "name": "Sadr",
+          "coordinates": { "x": 0.38, "y": 0.45 },
+          "brightness": 8,
+          "size": 8
+        },
+        {
+          "name": "Albireo",
+          "coordinates": { "x": 0.41, "y": 0.48 },
+          "brightness": 7,
+          "size": 7
+        },
+        {
+          "name": "Gienah",
+          "coordinates": { "x": 0.62, "y": 0.36 },
+          "brightness": 6,
+          "size": 6
+        }
+      ],
+      "lines": [
+        ["Deneb", "Sadr"],
+        ["Sadr", "Albireo"],
+        ["Sadr", "Gienah"]
+      ]
+    },
+
+    "Lyra": {
+      "stars": [
+        {
+          "name": "Vega",
+          "coordinates": { "x": 0.36, "y": 0.5 },
+          "brightness": 10,
+          "size": 10
+        },
+        {
+          "name": "Sheliak",
+          "coordinates": { "x": 0.38, "y": 0.52 },
+          "brightness": 6,
+          "size": 6
+        },
+        {
+          "name": "Sulafat",
+          "coordinates": { "x": 0.54, "y": 0.44 },
+          "brightness": 6,
+          "size": 6
+        }
+      ],
+      "lines": [
+        ["Sheliak", "Vega"],
+        ["Vega", "Sulafat"]
+      ]
+    },
+
+    "Aquila": {
+      "stars": [
+        {
+          "name": "Altair",
+          "coordinates": { "x": 0.6, "y": 0.55 },
+          "brightness": 10,
+          "size": 10
+        },
+        {
+          "name": "Tarazed",
+          "coordinates": { "x": 0.62, "y": 0.53 },
+          "brightness": 7,
+          "size": 7
+        },
+        {
+          "name": "Alshain",
+          "coordinates": { "x": 0.58, "y": 0.57 },
+          "brightness": 6,
+          "size": 6
+        }
+      ],
+      "lines": [
+        ["Tarazed", "Altair"],
+        ["Altair", "Alshain"]
+      ]
+    },
+
+    "Leo": {
+      "stars": [
+        {
+          "name": "Regulus",
+          "coordinates": { "x": 0.8, "y": 0.65 },
+          "brightness": 10,
+          "size": 10
+        },
+        {
+          "name": "Denebola",
+          "coordinates": { "x": 0.78, "y": 0.7 },
+          "brightness": 8,
+          "size": 8
+        },
+        {
+          "name": "Algieba",
+          "coordinates": { "x": 0.77, "y": 0.36 },
+          "brightness": 7,
+          "size": 7
+        }
+      ],
+      "lines": [
+        ["Regulus", "Algieba"],
+        ["Algieba", "Denebola"]
+      ]
+    },
+
+    "Gemini": {
+      "stars": [
+        {
+          "name": "Castor",
+          "coordinates": { "x": 0.78, "y": 0.5 },
+          "brightness": 9,
+          "size": 9
+        },
+        {
+          "name": "Pollux",
+          "coordinates": { "x": 0.8, "y": 0.53 },
+          "brightness": 10,
+          "size": 10
+        },
+        {
+          "name": "Alhena",
+          "coordinates": { "x": 0.74, "y": 0.46 },
+          "brightness": 7,
+          "size": 7
+        }
+      ],
+      "lines": [
+        ["Castor", "Pollux"],
+        ["Pollux", "Alhena"]
+      ]
+    },
+
+    "Taurus": {
+      "stars": [
+        {
+          "name": "Aldebaran",
+          "coordinates": { "x": 0.75, "y": 0.45 },
+          "brightness": 10,
+          "size": 10
+        },
+        {
+          "name": "Elnath",
+          "coordinates": { "x": 0.78, "y": 0.42 },
+          "brightness": 7,
+          "size": 7
+        }
+      ],
+      "lines": [["Aldebaran", "Elnath"]]
+    },
+
+    "Aries": {
+      "stars": [
+        {
+          "name": "Hamal",
+          "coordinates": { "x": 0.7, "y": 0.35 },
+          "brightness": 8,
+          "size": 8
+        },
+        {
+          "name": "Sheratan",
+          "coordinates": { "x": 0.72, "y": 0.37 },
+          "brightness": 6,
+          "size": 6
+        }
+      ],
+      "lines": [["Hamal", "Sheratan"]]
+    },
+
+    "Pisces": {
+      "stars": [
+        {
+          "name": "Alrescha",
+          "coordinates": { "x": 0.3, "y": 0.6 },
+          "brightness": 7,
+          "size": 7
+        },
+        {
+          "name": "Fumalsamakah",
+          "coordinates": { "x": 0.62, "y": 0.24 },
+          "brightness": 5,
+          "size": 5
+        }
+      ],
+      "lines": [["Alrescha", "Fumalsamakah"]]
+    },
+
+    "Aquarius": {
+      "stars": [
+        {
+          "name": "Sadalsuud",
+          "coordinates": { "x": 0.28, "y": 0.7 },
+          "brightness": 8,
+          "size": 8
+        },
+        {
+          "name": "Sadalmelik",
+          "coordinates": { "x": 0.53, "y": 0.21 },
+          "brightness": 7,
+          "size": 7
+        }
+      ],
+      "lines": [["Sadalsuud", "Sadalmelik"]]
+    },
+
+    "Capricornus": {
+      "stars": [
+        {
+          "name": "Deneb Algedi",
+          "coordinates": { "x": 0.32, "y": 0.78 },
+          "brightness": 7,
+          "size": 7
+        },
+        {
+          "name": "Dabih",
+          "coordinates": { "x": 0.52, "y": 0.17 },
+          "brightness": 6,
+          "size": 6
+        }
+      ],
+      "lines": [["Deneb Algedi", "Dabih"]]
+    },
+
+    "Sagittarius": {
+      "stars": [
+        {
+          "name": "Kaus Australis",
+          "coordinates": { "x": 0.4, "y": 0.82 },
+          "brightness": 9,
+          "size": 9
+        },
+        {
+          "name": "Nunki",
+          "coordinates": { "x": 0.43, "y": 0.16 },
+          "brightness": 7,
+          "size": 7
+        }
+      ],
+      "lines": [["Kaus Australis", "Nunki"]]
+    },
+
+    "Scorpius": {
+      "stars": [
+        {
+          "name": "Antares",
+          "coordinates": { "x": 0.5, "y": 0.85 },
+          "brightness": 10,
+          "size": 10
+        },
+        {
+          "name": "Shaula",
+          "coordinates": { "x": 0.38, "y": 0.22 },
+          "brightness": 8,
+          "size": 8
+        }
+      ],
+      "lines": [["Antares", "Shaula"]]
+    },
+
+    "Libra": {
+      "stars": [
+        {
+          "name": "Zubenelgenubi",
+          "coordinates": { "x": 0.6, "y": 0.82 },
+          "brightness": 7,
+          "size": 7
+        },
+        {
+          "name": "Zubeneschamali",
+          "coordinates": { "x": 0.36, "y": 0.27 },
+          "brightness": 6,
+          "size": 6
+        }
+      ],
+      "lines": [["Zubenelgenubi", "Zubeneschamali"]]
+    },
+
+    "Virgo": {
+      "stars": [
+        {
+          "name": "Spica",
+          "coordinates": { "x": 0.7, "y": 0.78 },
+          "brightness": 10,
+          "size": 10
+        },
+        {
+          "name": "Porrima",
+          "coordinates": { "x": 0.68, "y": 0.31 },
+          "brightness": 7,
+          "size": 7
+        }
+      ],
+      "lines": [["Spica", "Porrima"]]
+    }
+  }
+}
