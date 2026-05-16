@@ -1,6 +1,6 @@
 const canvasSketch = require("canvas-sketch");
 
-const constellationsData = require("./constellations.json");
+const constellationsData = require("./constellations_v2.json");
 
 const settings = {
   dimensions: [1080, 1080],
@@ -237,13 +237,14 @@ const sketch = () => {
       );
     }
     // Paint the planetary canvas in the main canvas
-    context.drawImage(
-      planetariumCanvas,
-      (width - width * 1.8) / 2,
-      -height * 0.88,
-      width * 1.8,
-      height * 1.8,
-    );
+    // context.drawImage(
+    //   planetariumCanvas,
+    //   (width - width * 1.8) / 2,
+    //   -height * 0.88,
+    //   width * 1.8,
+    //   height * 1.8,
+    // );
+    context.drawImage(planetariumCanvas, 0, 0, width, height);
   };
 };
 
