@@ -7,50 +7,50 @@
           "name": "Polaris",
           "ra": 2.53,
           "dec": 89.264,
-          "brightness": 10,
-          "size": 9
+          "brightness": 0.1629,
+          "magnitude": 1.97
         },
         {
           "name": "Kochab",
           "ra": 14.845,
           "dec": 74.155,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.1486,
+          "magnitude": 2.07
         },
         {
           "name": "Pherkad",
           "ra": 15.345,
           "dec": 71.834,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0603,
+          "magnitude": 3.05
         },
         {
           "name": "Yildun",
           "ra": 17.536,
           "dec": 86.587,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0182,
+          "magnitude": 4.35
         },
         {
           "name": "Epsilon UMi",
           "ra": 16.766,
           "dec": 82.037,
-          "brightness": 5,
-          "size": 5
+          "brightness": 0.0203,
+          "magnitude": 4.23
         },
         {
           "name": "Zeta UMi",
           "ra": 15.734,
           "dec": 77.794,
-          "brightness": 5,
-          "size": 5
+          "brightness": 0.0187,
+          "magnitude": 4.32
         },
         {
           "name": "Eta UMi",
           "ra": 16.291,
           "dec": 75.755,
-          "brightness": 5,
-          "size": 5
+          "brightness": 0.0105,
+          "magnitude": 4.95
         }
       ],
       "paths": [
@@ -74,50 +74,50 @@
           "name": "Dubhe",
           "ra": 11.062,
           "dec": 61.75,
-          "brightness": 9,
-          "size": 8
+          "brightness": 0.1923,
+          "magnitude": 1.79
         },
         {
           "name": "Merak",
           "ra": 11.03,
           "dec": 56.382,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.1127,
+          "magnitude": 2.37
         },
         {
           "name": "Phecda",
           "ra": 11.897,
           "dec": 53.694,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.1057,
+          "magnitude": 2.44
         },
         {
           "name": "Megrez",
           "ra": 12.257,
           "dec": 57.032,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0474,
+          "magnitude": 3.31
         },
         {
           "name": "Alioth",
           "ra": 12.9,
           "dec": 55.96,
-          "brightness": 9,
-          "size": 8
+          "brightness": 0.1977,
+          "magnitude": 1.76
         },
         {
           "name": "Mizar",
           "ra": 13.398,
           "dec": 54.925,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.1236,
+          "magnitude": 2.27
         },
         {
           "name": "Alkaid",
           "ra": 13.792,
           "dec": 49.313,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.182,
+          "magnitude": 1.85
         }
       ],
       "paths": [
@@ -131,36 +131,36 @@
           "name": "Schedar",
           "ra": 0.675,
           "dec": 56.537,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.1271,
+          "magnitude": 2.24
         },
         {
           "name": "Caph",
           "ra": 0.153,
           "dec": 59.149,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.1236,
+          "magnitude": 2.27
         },
         {
           "name": "Gamma Cas",
           "ra": 0.945,
           "dec": 60.717,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.1028,
+          "magnitude": 2.47
         },
         {
           "name": "Ruchbah",
           "ra": 1.43,
           "dec": 60.235,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0847,
+          "magnitude": 2.68
         },
         {
           "name": "Segin",
           "ra": 2.293,
           "dec": 63.67,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0449,
+          "magnitude": 3.37
         }
       ],
       "paths": [["Caph", "Schedar", "Gamma Cas", "Ruchbah", "Segin"]]
@@ -172,50 +172,50 @@
           "name": "Betelgeuse",
           "ra": 5.919,
           "dec": 7.407,
-          "brightness": 10,
-          "size": 9
+          "brightness": 0.631,
+          "magnitude": 0.5
         },
         {
           "name": "Rigel",
           "ra": 5.243,
           "dec": -8.202,
-          "brightness": 10,
-          "size": 9
+          "brightness": 0.8872,
+          "magnitude": 0.13
         },
         {
           "name": "Bellatrix",
           "ra": 5.418,
           "dec": 6.349,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.2208,
+          "magnitude": 1.64
         },
         {
           "name": "Saiph",
           "ra": 5.795,
           "dec": -9.669,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.1459,
+          "magnitude": 2.09
         },
         {
           "name": "Alnitak",
           "ra": 5.679,
           "dec": -1.942,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.177,
+          "magnitude": 1.88
         },
         {
           "name": "Alnilam",
           "ra": 5.603,
           "dec": -1.201,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.2089,
+          "magnitude": 1.7
         },
         {
           "name": "Mintaka",
           "ra": 5.533,
           "dec": -0.299,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.1282,
+          "magnitude": 2.23
         }
       ],
       "paths": [
@@ -237,36 +237,36 @@
           "name": "Regulus",
           "ra": 10.139,
           "dec": 11.967,
-          "brightness": 10,
-          "size": 9
+          "brightness": 0.2884,
+          "magnitude": 1.35
         },
         {
           "name": "Denebola",
           "ra": 11.817,
           "dec": 14.572,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.1393,
+          "magnitude": 2.14
         },
         {
           "name": "Algieba",
           "ra": 10.332,
           "dec": 19.841,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.1472,
+          "magnitude": 2.08
         },
         {
           "name": "Zosma",
           "ra": 11.236,
           "dec": 20.523,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0946,
+          "magnitude": 2.56
         },
         {
           "name": "Chertan",
           "ra": 11.237,
           "dec": 15.429,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0461,
+          "magnitude": 3.34
         }
       ],
       "paths": [
@@ -274,7 +274,6 @@
         ["Regulus", "Chertan", "Denebola"]
       ]
     },
-
     {
       "name": "Scorpius",
       "stars": [
@@ -282,41 +281,40 @@
           "name": "Antares",
           "ra": 16.49,
           "dec": -26.432,
-          "brightness": 10,
-          "size": 9
+          "brightness": 0.3767,
+          "magnitude": 1.06
         },
         {
           "name": "Shaula",
           "ra": 17.56,
           "dec": -37.103,
-          "brightness": 9,
-          "size": 8
+          "brightness": 0.2249,
+          "magnitude": 1.62
         },
         {
           "name": "Sargas",
           "ra": 17.621,
           "dec": -42.997,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.1803,
+          "magnitude": 1.86
         },
         {
           "name": "Dschubba",
           "ra": 16.005,
           "dec": -22.621,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.1213,
+          "magnitude": 2.29
         },
         {
           "name": "Acrab",
           "ra": 16.09,
           "dec": -19.805,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0895,
+          "magnitude": 2.62
         }
       ],
       "paths": [["Acrab", "Dschubba", "Antares", "Shaula", "Sargas"]]
     },
-
     {
       "name": "Gemini",
       "stars": [
@@ -324,36 +322,36 @@
           "name": "Castor",
           "ra": 7.576,
           "dec": 31.888,
-          "brightness": 9,
-          "size": 8
+          "brightness": 0.2333,
+          "magnitude": 1.58
         },
         {
           "name": "Pollux",
           "ra": 7.755,
           "dec": 28.026,
-          "brightness": 10,
-          "size": 9
+          "brightness": 0.3436,
+          "magnitude": 1.16
         },
         {
           "name": "Alhena",
           "ra": 6.628,
           "dec": 16.399,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.169,
+          "magnitude": 1.93
         },
         {
           "name": "Wasat",
           "ra": 7.335,
           "dec": 21.982,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0387,
+          "magnitude": 3.53
         },
         {
           "name": "Mebsuta",
           "ra": 6.732,
           "dec": 25.131,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0643,
+          "magnitude": 2.98
         }
       ],
       "paths": [
@@ -368,36 +366,36 @@
           "name": "Aldebaran",
           "ra": 4.598,
           "dec": 16.509,
-          "brightness": 10,
-          "size": 9
+          "brightness": 0.4571,
+          "magnitude": 0.85
         },
         {
           "name": "Elnath",
           "ra": 5.438,
           "dec": 28.607,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.2188,
+          "magnitude": 1.65
         },
         {
           "name": "Alcyone",
           "ra": 3.791,
           "dec": 24.105,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.0711,
+          "magnitude": 2.87
         },
         {
           "name": "Atlas",
           "ra": 3.819,
           "dec": 24.053,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0356,
+          "magnitude": 3.62
         },
         {
           "name": "Electra",
           "ra": 3.749,
           "dec": 24.113,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0331,
+          "magnitude": 3.7
         }
       ],
       "paths": [
@@ -412,29 +410,29 @@
           "name": "Spica",
           "ra": 13.42,
           "dec": -11.161,
-          "brightness": 10,
-          "size": 9
+          "brightness": 0.4093,
+          "magnitude": 0.97
         },
         {
           "name": "Zavijava",
           "ra": 11.845,
           "dec": 1.765,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.036,
+          "magnitude": 3.61
         },
         {
           "name": "Porrima",
           "ra": 12.694,
           "dec": -1.449,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0802,
+          "magnitude": 2.74
         },
         {
           "name": "Auva",
           "ra": 12.331,
           "dec": -0.666,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0445,
+          "magnitude": 3.38
         }
       ],
       "paths": [
@@ -449,22 +447,22 @@
           "name": "Zubenelgenubi",
           "ra": 14.847,
           "dec": -16.041,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0794,
+          "magnitude": 2.75
         },
         {
           "name": "Zubeneschamali",
           "ra": 15.283,
           "dec": -9.383,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.0904,
+          "magnitude": 2.61
         },
         {
           "name": "Brachium",
           "ra": 15.617,
           "dec": -19.382,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0483,
+          "magnitude": 3.29
         }
       ],
       "paths": [["Zubenelgenubi", "Zubeneschamali", "Brachium"]]
@@ -476,36 +474,36 @@
           "name": "Kaus Australis",
           "ra": 18.402,
           "dec": -34.384,
-          "brightness": 9,
-          "size": 8
+          "brightness": 0.182,
+          "magnitude": 1.85
         },
         {
           "name": "Nunki",
           "ra": 18.921,
           "dec": -26.296,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.1556,
+          "magnitude": 2.02
         },
         {
           "name": "Ascella",
           "ra": 19.043,
           "dec": -29.88,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.092,
+          "magnitude": 2.59
         },
         {
           "name": "Kaus Media",
           "ra": 18.35,
           "dec": -29.828,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0832,
+          "magnitude": 2.7
         },
         {
           "name": "Kaus Borealis",
           "ra": 18.466,
           "dec": -25.421,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0752,
+          "magnitude": 2.81
         }
       ],
       "paths": [
@@ -520,22 +518,22 @@
           "name": "Deneb Algedi",
           "ra": 21.785,
           "dec": -16.127,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0724,
+          "magnitude": 2.85
         },
         {
           "name": "Dabih",
           "ra": 20.35,
           "dec": -14.781,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0603,
+          "magnitude": 3.05
         },
         {
           "name": "Nashira",
           "ra": 21.668,
           "dec": -16.662,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0337,
+          "magnitude": 3.68
         }
       ],
       "paths": [["Dabih", "Deneb Algedi", "Nashira"]]
@@ -547,29 +545,29 @@
           "name": "Sadalsuud",
           "ra": 21.525,
           "dec": -5.571,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.0685,
+          "magnitude": 2.91
         },
         {
           "name": "Sadalmelik",
           "ra": 22.097,
           "dec": -0.319,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.0655,
+          "magnitude": 2.96
         },
         {
           "name": "Skat",
           "ra": 22.91,
           "dec": -15.82,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0492,
+          "magnitude": 3.27
         },
         {
           "name": "Albali",
           "ra": 20.795,
           "dec": -9.495,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.031,
+          "magnitude": 3.77
         }
       ],
       "paths": [
@@ -584,27 +582,26 @@
           "name": "Alrescha",
           "ra": 2.034,
           "dec": 2.763,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0296,
+          "magnitude": 3.82
         },
         {
           "name": "Fumalsamakah",
           "ra": 0.988,
           "dec": 6.953,
-          "brightness": 5,
-          "size": 5
+          "brightness": 0.0154,
+          "magnitude": 4.53
         },
         {
           "name": "Eta Piscium",
           "ra": 1.524,
           "dec": 15.345,
-          "brightness": 5,
-          "size": 5
+          "brightness": 0.0356,
+          "magnitude": 3.62
         }
       ],
       "paths": [["Fumalsamakah", "Alrescha", "Eta Piscium"]]
     },
-
     {
       "name": "Pegasus",
       "stars": [
@@ -612,29 +609,29 @@
           "name": "Markab",
           "ra": 23.079,
           "dec": 15.205,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.1009,
+          "magnitude": 2.49
         },
         {
           "name": "Scheat",
           "ra": 23.062,
           "dec": 28.082,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.1076,
+          "magnitude": 2.42
         },
         {
           "name": "Algenib",
           "ra": 0.22,
           "dec": 15.183,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0738,
+          "magnitude": 2.83
         },
         {
           "name": "Enif",
           "ra": 21.736,
           "dec": 9.875,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.1117,
+          "magnitude": 2.38
         }
       ],
       "paths": [["Markab", "Scheat", "Algenib", "Enif"]]
@@ -646,22 +643,22 @@
           "name": "Alpheratz",
           "ra": 0.139,
           "dec": 29.09,
-          "brightness": 9,
-          "size": 8
+          "brightness": 0.1486,
+          "magnitude": 2.07
         },
         {
           "name": "Mirach",
           "ra": 1.162,
           "dec": 35.62,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.1486,
+          "magnitude": 2.07
         },
         {
           "name": "Almach",
           "ra": 2.065,
           "dec": 42.329,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.1445,
+          "magnitude": 2.1
         }
       ],
       "paths": [["Alpheratz", "Mirach", "Almach"]]
@@ -673,22 +670,22 @@
           "name": "Mirfak",
           "ra": 3.405,
           "dec": 49.861,
-          "brightness": 9,
-          "size": 8
+          "brightness": 0.1923,
+          "magnitude": 1.79
         },
         {
           "name": "Algol",
           "ra": 3.136,
           "dec": 40.955,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.1459,
+          "magnitude": 2.09
         },
         {
           "name": "Atik",
           "ra": 3.902,
           "dec": 31.883,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0705,
+          "magnitude": 2.88
         }
       ],
       "paths": [["Mirfak", "Algol", "Atik"]]
@@ -700,22 +697,22 @@
           "name": "Vega",
           "ra": 18.615,
           "dec": 38.783,
-          "brightness": 10,
-          "size": 9
+          "brightness": 0.9727,
+          "magnitude": 0.03
         },
         {
           "name": "Sheliak",
           "ra": 18.746,
           "dec": 33.362,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0391,
+          "magnitude": 3.52
         },
         {
           "name": "Sulafat",
           "ra": 18.982,
           "dec": 32.689,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0506,
+          "magnitude": 3.24
         }
       ],
       "paths": [["Vega", "Sheliak", "Sulafat"]]
@@ -727,22 +724,22 @@
           "name": "Altair",
           "ra": 19.846,
           "dec": 8.868,
-          "brightness": 10,
-          "size": 9
+          "brightness": 0.492,
+          "magnitude": 0.77
         },
         {
           "name": "Tarazed",
           "ra": 19.771,
           "dec": 10.613,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.0817,
+          "magnitude": 2.72
         },
         {
           "name": "Alshain",
           "ra": 19.921,
           "dec": 6.406,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0328,
+          "magnitude": 3.71
         }
       ],
       "paths": [["Tarazed", "Altair", "Alshain"]]
@@ -754,22 +751,22 @@
           "name": "Hamal",
           "ra": 2.119,
           "dec": 23.462,
-          "brightness": 9,
-          "size": 8
+          "brightness": 0.1585,
+          "magnitude": 2
         },
         {
           "name": "Sheratan",
           "ra": 1.912,
           "dec": 20.808,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0871,
+          "magnitude": 2.65
         },
         {
           "name": "Mesarthim",
           "ra": 1.975,
           "dec": 19.293,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0281,
+          "magnitude": 3.88
         }
       ],
       "paths": [["Hamal", "Sheratan", "Mesarthim"]]
@@ -781,22 +778,22 @@
           "name": "Altarf",
           "ra": 8.275,
           "dec": 9.185,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0391,
+          "magnitude": 3.52
         },
         {
           "name": "Asellus Borealis",
           "ra": 8.721,
           "dec": 21.469,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0198,
+          "magnitude": 4.26
         },
         {
           "name": "Asellus Australis",
           "ra": 8.974,
           "dec": 18.154,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0265,
+          "magnitude": 3.94
         }
       ],
       "paths": [["Asellus Borealis", "Altarf", "Asellus Australis"]]
@@ -808,100 +805,92 @@
           "name": "Thuban",
           "ra": 14.074,
           "dec": 64.375,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.034,
+          "magnitude": 3.67
         },
-
         {
           "name": "Edasich",
           "ra": 15.415,
           "dec": 58.966,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0483,
+          "magnitude": 3.29
         },
         {
           "name": "Altais",
           "ra": 16.399,
           "dec": 61.514,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0592,
+          "magnitude": 3.07
         },
-
         {
           "name": "Eltanin",
           "ra": 17.943,
           "dec": 51.488,
-          "brightness": 9,
-          "size": 8
+          "brightness": 0.1271,
+          "magnitude": 2.24
         },
         {
           "name": "Rastaban",
           "ra": 17.507,
           "dec": 52.301,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.0766,
+          "magnitude": 2.79
         },
-
         {
           "name": "Grumium",
           "ra": 17.892,
           "dec": 56.872,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0316,
+          "magnitude": 3.75
         },
-
         {
           "name": "Kuma",
           "ra": 18.35,
           "dec": 69.67,
-          "brightness": 5,
-          "size": 4
+          "brightness": 0.0112,
+          "magnitude": 4.88
         },
         {
           "name": "Tyl",
           "ra": 19.209,
           "dec": 67.661,
-          "brightness": 5,
-          "size": 4
+          "brightness": 0.0291,
+          "magnitude": 3.84
         },
-
         {
           "name": "Giausar",
           "ra": 19.802,
           "dec": 70.267,
-          "brightness": 5,
-          "size": 4
+          "brightness": 0.0296,
+          "magnitude": 3.82
         },
         {
           "name": "Dziban",
           "ra": 19.993,
           "dec": 72.421,
-          "brightness": 5,
-          "size": 4
+          "brightness": 0.0142,
+          "magnitude": 4.62
         },
-
         {
           "name": "Aldhibah",
           "ra": 20.489,
           "dec": 62.994,
-          "brightness": 4,
-          "size": 4
+          "brightness": 0.054,
+          "magnitude": 3.17
         },
         {
           "name": "Alrakis",
           "ra": 20.046,
           "dec": 54.47,
-          "brightness": 4,
-          "size": 4
+          "brightness": 0.0108,
+          "magnitude": 4.92
         }
       ],
       "paths": [
         ["Thuban", "Edasich", "Altais", "Eltanin"],
         ["Eltanin", "Rastaban"],
         ["Rastaban", "Grumium", "Altais"],
-
         ["Eltanin", "Alrakis", "Aldhibah", "Tyl", "Giausar", "Dziban"],
-
         ["Kuma", "Tyl"]
       ]
     },
@@ -912,22 +901,22 @@
           "name": "Arcturus",
           "ra": 14.261,
           "dec": 19.182,
-          "brightness": 10,
-          "size": 9
+          "brightness": 1.0375,
+          "magnitude": -0.04
         },
         {
           "name": "Nekkar",
           "ra": 15.032,
           "dec": 40.39,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0402,
+          "magnitude": 3.49
         },
         {
           "name": "Izar",
           "ra": 14.749,
           "dec": 27.074,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.1148,
+          "magnitude": 2.35
         }
       ],
       "paths": [["Nekkar", "Izar", "Arcturus"]]
@@ -939,22 +928,22 @@
           "name": "Alphecca",
           "ra": 15.578,
           "dec": 26.714,
-          "brightness": 9,
-          "size": 8
+          "brightness": 0.1294,
+          "magnitude": 2.22
         },
         {
           "name": "Nusakan",
           "ra": 15.463,
           "dec": 29.105,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0337,
+          "magnitude": 3.68
         },
         {
           "name": "Theta CrB",
           "ra": 15.548,
           "dec": 31.359,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0221,
+          "magnitude": 4.14
         }
       ],
       "paths": [["Theta CrB", "Nusakan", "Alphecca"]]
@@ -966,29 +955,29 @@
           "name": "Kornephoros",
           "ra": 16.503,
           "dec": 21.489,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.078,
+          "magnitude": 2.77
         },
         {
           "name": "Rasalgethi",
           "ra": 17.245,
           "dec": 14.39,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.0406,
+          "magnitude": 3.48
         },
         {
           "name": "Eta Her",
           "ra": 16.714,
           "dec": 38.922,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0387,
+          "magnitude": 3.53
         },
         {
           "name": "Zeta Her",
           "ra": 16.688,
           "dec": 31.602,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0752,
+          "magnitude": 2.81
         }
       ],
       "paths": [["Eta Her", "Zeta Her", "Kornephoros", "Rasalgethi"]]
@@ -1000,22 +989,22 @@
           "name": "Capella",
           "ra": 5.278,
           "dec": 45.997,
-          "brightness": 10,
-          "size": 9
+          "brightness": 0.929,
+          "magnitude": 0.08
         },
         {
           "name": "Menkalinan",
           "ra": 5.992,
           "dec": 44.947,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.1738,
+          "magnitude": 1.9
         },
         {
           "name": "Almaaz",
           "ra": 5.108,
           "dec": 41.234,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0637,
+          "magnitude": 2.99
         }
       ],
       "paths": [["Capella", "Menkalinan", "Almaaz"]]
@@ -1027,22 +1016,22 @@
           "name": "Alpha Lyn",
           "ra": 9.35,
           "dec": 34.392,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.056,
+          "magnitude": 3.13
         },
         {
           "name": "38 Lyn",
           "ra": 9.314,
           "dec": 43.218,
-          "brightness": 5,
-          "size": 5
+          "brightness": 0.0296,
+          "magnitude": 3.82
         },
         {
           "name": "15 Lyn",
           "ra": 8.38,
           "dec": 58.248,
-          "brightness": 5,
-          "size": 5
+          "brightness": 0.0182,
+          "magnitude": 4.35
         }
       ],
       "paths": [["15 Lyn", "38 Lyn", "Alpha Lyn"]]
@@ -1054,22 +1043,22 @@
           "name": "Alpha Lac",
           "ra": 22.521,
           "dec": 50.282,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.031,
+          "magnitude": 3.77
         },
         {
           "name": "Beta Lac",
           "ra": 22.392,
           "dec": 52.229,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0169,
+          "magnitude": 4.43
         },
         {
           "name": "4 Lac",
           "ra": 22.408,
           "dec": 49.476,
-          "brightness": 5,
-          "size": 5
+          "brightness": 0.0149,
+          "magnitude": 4.57
         }
       ],
       "paths": [["Beta Lac", "Alpha Lac", "4 Lac"]]
@@ -1081,22 +1070,22 @@
           "name": "Alderamin",
           "ra": 21.309,
           "dec": 62.585,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.1047,
+          "magnitude": 2.45
         },
         {
           "name": "Alfirk",
           "ra": 21.477,
           "dec": 70.561,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0511,
+          "magnitude": 3.23
         },
         {
           "name": "Errai",
           "ra": 23.655,
           "dec": 77.632,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.052,
+          "magnitude": 3.21
         }
       ],
       "paths": [["Alderamin", "Alfirk", "Errai"]]
@@ -1108,22 +1097,22 @@
           "name": "Deneb",
           "ra": 20.691,
           "dec": 45.28,
-          "brightness": 10,
-          "size": 9
+          "brightness": 0.3162,
+          "magnitude": 1.25
         },
         {
           "name": "Sadr",
           "ra": 20.37,
           "dec": 40.256,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.1282,
+          "magnitude": 2.23
         },
         {
           "name": "Albireo",
           "ra": 19.512,
           "dec": 27.959,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.0581,
+          "magnitude": 3.09
         }
       ],
       "paths": [["Deneb", "Sadr", "Albireo"]]
@@ -1135,22 +1124,22 @@
           "name": "Rotanev",
           "ra": 20.625,
           "dec": 14.595,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.035,
+          "magnitude": 3.64
         },
         {
           "name": "Sualocin",
           "ra": 20.66,
           "dec": 15.912,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.031,
+          "magnitude": 3.77
         },
         {
           "name": "Gamma Del",
           "ra": 20.777,
           "dec": 16.124,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0196,
+          "magnitude": 4.27
         }
       ],
       "paths": [["Rotanev", "Sualocin", "Gamma Del"]]
@@ -1162,27 +1151,26 @@
           "name": "Gamma Sge",
           "ra": 19.979,
           "dec": 19.492,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0409,
+          "magnitude": 3.47
         },
         {
           "name": "Delta Sge",
           "ra": 19.789,
           "dec": 18.534,
-          "brightness": 5,
-          "size": 5
+          "brightness": 0.0296,
+          "magnitude": 3.82
         },
         {
           "name": "Alpha Sge",
           "ra": 19.668,
           "dec": 18.013,
-          "brightness": 5,
-          "size": 5
+          "brightness": 0.0175,
+          "magnitude": 4.39
         }
       ],
       "paths": [["Gamma Sge", "Delta Sge", "Alpha Sge"]]
     },
-
     {
       "name": "Ophiuchus",
       "stars": [
@@ -1190,36 +1178,36 @@
           "name": "Rasalhague",
           "ra": 17.582,
           "dec": 12.56,
-          "brightness": 9,
-          "size": 8
+          "brightness": 0.1472,
+          "magnitude": 2.08
         },
         {
           "name": "Sabik",
           "ra": 17.172,
           "dec": -15.724,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.1067,
+          "magnitude": 2.43
         },
         {
           "name": "Yed Prior",
           "ra": 16.239,
           "dec": -3.695,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0794,
+          "magnitude": 2.75
         },
         {
           "name": "Yed Posterior",
           "ra": 16.305,
           "dec": -4.693,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0492,
+          "magnitude": 3.27
         },
         {
           "name": "Cebalrai",
           "ra": 17.724,
           "dec": 4.567,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.078,
+          "magnitude": 2.77
         }
       ],
       "paths": [
@@ -1234,15 +1222,15 @@
           "name": "Procyon",
           "ra": 7.655,
           "dec": 5.225,
-          "brightness": 10,
-          "size": 9
+          "brightness": 0.7311,
+          "magnitude": 0.34
         },
         {
           "name": "Gomeisa",
           "ra": 7.452,
           "dec": 8.289,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0698,
+          "magnitude": 2.89
         }
       ],
       "paths": [["Procyon", "Gomeisa"]]
@@ -1254,22 +1242,22 @@
           "name": "Diadem",
           "ra": 13.166,
           "dec": 17.529,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0187,
+          "magnitude": 4.32
         },
         {
           "name": "Beta Com",
           "ra": 13.198,
           "dec": 27.878,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0198,
+          "magnitude": 4.26
         },
         {
           "name": "Gamma Com",
           "ra": 12.449,
           "dec": 28.268,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.018,
+          "magnitude": 4.36
         }
       ],
       "paths": [["Gamma Com", "Beta Com", "Diadem"]]
@@ -1281,22 +1269,22 @@
           "name": "Beta Cam",
           "ra": 5.033,
           "dec": 60.442,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0244,
+          "magnitude": 4.03
         },
         {
           "name": "Alpha Cam",
           "ra": 4.9,
           "dec": 66.342,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0192,
+          "magnitude": 4.29
         },
         {
           "name": "CS Cam",
           "ra": 3.839,
           "dec": 68.506,
-          "brightness": 5,
-          "size": 5
+          "brightness": 0.0207,
+          "magnitude": 4.21
         }
       ],
       "paths": [["CS Cam", "Alpha Cam", "Beta Cam"]]
@@ -1308,15 +1296,15 @@
           "name": "Cor Caroli",
           "ra": 12.933,
           "dec": 38.318,
-          "brightness": 9,
-          "size": 8
+          "brightness": 0.0698,
+          "magnitude": 2.89
         },
         {
           "name": "Chara",
           "ra": 12.562,
           "dec": 41.357,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0198,
+          "magnitude": 4.26
         }
       ],
       "paths": [["Cor Caroli", "Chara"]]
@@ -1328,22 +1316,22 @@
           "name": "Alpha Mon",
           "ra": 7.687,
           "dec": -9.551,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0268,
+          "magnitude": 3.93
         },
         {
           "name": "Beta Mon",
           "ra": 6.48,
           "dec": -7.034,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0319,
+          "magnitude": 3.74
         },
         {
           "name": "Gamma Mon",
           "ra": 6.247,
           "dec": -6.275,
-          "brightness": 5,
-          "size": 5
+          "brightness": 0.0256,
+          "magnitude": 3.98
         }
       ],
       "paths": [["Gamma Mon", "Beta Mon", "Alpha Mon"]]
@@ -1355,22 +1343,22 @@
           "name": "Anser",
           "ra": 19.478,
           "dec": 24.665,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0167,
+          "magnitude": 4.44
         },
         {
           "name": "23 Vul",
           "ra": 20.005,
           "dec": 27.753,
-          "brightness": 5,
-          "size": 5
+          "brightness": 0.0156,
+          "magnitude": 4.52
         },
         {
           "name": "13 Vul",
           "ra": 19.891,
           "dec": 24.079,
-          "brightness": 5,
-          "size": 5
+          "brightness": 0.0147,
+          "magnitude": 4.58
         }
       ],
       "paths": [["13 Vul", "Anser", "23 Vul"]]
@@ -1382,22 +1370,22 @@
           "name": "Mothallah",
           "ra": 2.159,
           "dec": 34.988,
-          "brightness": 8,
-          "size": 7
+          "brightness": 0.0429,
+          "magnitude": 3.42
         },
         {
           "name": "Beta Tri",
           "ra": 2.159,
           "dec": 35.595,
-          "brightness": 7,
-          "size": 6
+          "brightness": 0.0631,
+          "magnitude": 3
         },
         {
           "name": "Gamma Tri",
           "ra": 2.285,
           "dec": 33.847,
-          "brightness": 6,
-          "size": 5
+          "brightness": 0.0249,
+          "magnitude": 4.01
         }
       ],
       "paths": [["Gamma Tri", "Mothallah", "Beta Tri"]]

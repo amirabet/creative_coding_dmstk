@@ -10,7 +10,8 @@ const settings = {
 const getStarFillColor = (brightness) => {
   const minColor = { red: 0, green: 0, blue: 205 };
   const maxColor = { red: 224, green: 255, blue: 255 };
-  const intensity = Math.max(0, Math.min(brightness, 10)) / 10;
+  // brightness = 10^(-0.4*m); brightest stars ~1.0, dimmest ~0.01
+  const intensity = Math.max(0, Math.min(brightness, 1.0));
 
   const red = Math.round(
     minColor.red + (maxColor.red - minColor.red) * intensity,
@@ -26,7 +27,7 @@ const getStarFillColor = (brightness) => {
 };
 
 const getStarBlinkAmount = (time, x, y, brightness) => {
-  const phaseOffset = x * 17 + y * 31 + brightness * 0.2;
+  const phaseOffset = x * 17 + y * 31 + brightness * 2;
   const pulse = (Math.sin(time * 4 + phaseOffset) + 1) / 2;
 
   return 0.45 + pulse * 0.55;
@@ -197,16 +198,18 @@ const sketch = () => {
 
       // Paint stars
       for (const star of Object.values(starsByName)) {
-        const { ra, dec, xPos, yPos, size, brightness } = star;
+        const { ra, dec, xPos, yPos, magnitude, brightness } = star;
         const blinkAmount = getStarBlinkAmount(time, xPos, yPos, brightness);
         context.save();
         context.globalAlpha = blinkAmount;
         context.fillStyle = getStarFillColor(brightness);
         context.beginPath();
+        // magnitude = apparent magnitude (m); lower m = bigger/brighter star
+        const pixelmagnitude = Math.max(0.5, (6.5 - magnitude) * 1.5);
         context.arc(
           xPos * width,
           yPos * height,
-          size * (0.45 + blinkAmount * 0.25),
+          pixelmagnitude * (0.45 + blinkAmount * 0.25),
           0,
           Math.PI * 2,
         );
@@ -227,10 +230,10 @@ const sketch = () => {
         bounds.maxX - bounds.minX,
         bounds.maxY - bounds.minY,
       );
-      const fontSize = Math.round(10 + Math.min(boundsSpan / 0.5, 1) * 6);
+      const fontmagnitude = Math.round(10 + Math.min(boundsSpan / 0.5, 1) * 6);
 
       context.fillStyle = "LightSkyBlue";
-      context.font = `${fontSize}px sans-serif`;
+      context.font = `${fontmagnitude}px sans-serif`;
       context.textAlign = "center";
       context.textBaseline = "middle";
       context.strokeStyle = "MidnightBlue";
@@ -261,7 +264,7 @@ canvasSketch(sketch, settings);
 /* TODOs  
 - Imporve draco unions
 - Improve other constellations shapes
-- Change size and brightness of stars based on their magnitude and size (units are different)
+- Change magnitude and brightness of stars based on their magnitude and magnitude (units are different)
 - Think how can Aquarius and Capricorn be visible
 - Recover second canvas to simplify scaling and rotation
 - Visible star's names on hover
