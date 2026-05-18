@@ -1,6 +1,6 @@
 const canvasSketch = require("canvas-sketch");
 
-const constellationsData = require("./constellations_v2.json");
+const constellationsData = require("./constellations_v3.json");
 
 const settings = {
   dimensions: [1080, 1080],
@@ -30,6 +30,21 @@ const getStarBlinkAmount = (time, x, y, brightness) => {
   const pulse = (Math.sin(time * 4 + phaseOffset) + 1) / 2;
 
   return 0.45 + pulse * 0.55;
+};
+
+const raDecToXY = (ra, dec) => {
+  // RA: 0–24 horas
+  // DEC: -90 a +90 grados
+
+  const angle = (1 - ra / 24) * 2 * Math.PI;
+
+  // radio: 0 en el centro (DEC=90), 1 en el borde (DEC=0)
+  const radius = (90 - dec) / 90;
+
+  const xPos = 0.5 + radius * Math.cos(angle);
+  const yPos = 0.5 - radius * Math.sin(angle); // ← importante invertir Y
+
+  return { xPos, yPos };
 };
 
 const drawTextOnArc = (
@@ -81,7 +96,10 @@ const drawTextOnArc = (
 // Create a new secondary canvas to render the character / type
 const planetariumCanvas = document.createElement("canvas");
 const planetariumContext = planetariumCanvas.getContext("2d");
-
+const constellations = constellationsData.constellations.flatMap((entry) =>
+  Array.isArray(entry.constellations) ? entry.constellations : [entry],
+);
+console.log(constellations);
 const sketch = () => {
   return ({ context, width, height, time }) => {
     // Set secondary plantarium size
@@ -141,18 +159,19 @@ const sketch = () => {
     }
 
     // loop all constellations
-    for (const [constellationName, constellation] of Object.entries(
-      constellationsData.constellations,
-    )) {
+    for (const constellation of constellations) {
       const starsByName = Object.fromEntries(
-        constellation.stars.map((star) => [star.name, star]),
+        constellation.stars.map((star) => [
+          star.name,
+          { ...star, ...raDecToXY(star.ra, star.dec) },
+        ]),
       );
-      const bounds = constellation.stars.reduce(
+      const bounds = Object.values(starsByName).reduce(
         (accumulator, star) => ({
-          minX: Math.min(accumulator.minX, star.x),
-          minY: Math.min(accumulator.minY, star.y),
-          maxX: Math.max(accumulator.maxX, star.x),
-          maxY: Math.max(accumulator.maxY, star.y),
+          minX: Math.min(accumulator.minX, star.xPos),
+          minY: Math.min(accumulator.minY, star.yPos),
+          maxX: Math.max(accumulator.maxX, star.xPos),
+          maxY: Math.max(accumulator.maxY, star.yPos),
         }),
         {
           minX: Number.POSITIVE_INFINITY,
@@ -174,8 +193,14 @@ const sketch = () => {
           if (!startStar || !endStar) continue;
 
           planetariumContext.beginPath();
-          planetariumContext.moveTo(startStar.x * width, startStar.y * height);
-          planetariumContext.lineTo(endStar.x * width, endStar.y * height);
+          planetariumContext.moveTo(
+            startStar.xPos * width,
+            startStar.yPos * height,
+          );
+          planetariumContext.lineTo(
+            endStar.xPos * width,
+            endStar.yPos * height,
+          );
           planetariumContext.lineWidth = 2;
           planetariumContext.strokeStyle = "PaleGoldenRod";
           planetariumContext.stroke();
@@ -183,19 +208,16 @@ const sketch = () => {
       }
 
       // Paint stars
-      for (const star of constellation.stars) {
-        const { x, y, size, brightness } = star;
-        const xPos = x * width;
-        const yPos = y * height;
-        const blinkAmount = getStarBlinkAmount(time, x, y, brightness);
-
+      for (const star of Object.values(starsByName)) {
+        const { ra, dec, xPos, yPos, size, brightness } = star;
+        const blinkAmount = getStarBlinkAmount(time, xPos, yPos, brightness);
         planetariumContext.save();
         planetariumContext.globalAlpha = blinkAmount;
         planetariumContext.fillStyle = getStarFillColor(brightness);
         planetariumContext.beginPath();
         planetariumContext.arc(
-          xPos,
-          yPos,
+          xPos * width,
+          yPos * height,
           size * (0.45 + blinkAmount * 0.25),
           0,
           Math.PI * 2,
