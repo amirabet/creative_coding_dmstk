@@ -57,10 +57,7 @@ const drawTextOnArc = (
   centerAngle,
 ) => {
   const spacing = 4;
-  const normalizedAngle =
-    ((centerAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
-  const shouldFlip = normalizedAngle > 0 && normalizedAngle < Math.PI;
-  const characters = shouldFlip ? [...text].reverse() : [...text];
+  const characters = [...text].reverse();
   const characterAngles = characters.map(
     (character) => (context.measureText(character).width + spacing) / radius,
   );
@@ -79,8 +76,7 @@ const drawTextOnArc = (
 
     const x = arcCenterX + Math.cos(currentAngle) * radius;
     const y = arcCenterY + Math.sin(currentAngle) * radius;
-    const tangentAngle =
-      currentAngle + (shouldFlip ? -Math.PI / 2 : Math.PI / 2);
+    const tangentAngle = currentAngle - Math.PI / 2;
 
     context.save();
     context.translate(x, y);
@@ -99,7 +95,11 @@ const drawTextOnArc = (
 const constellations = constellationsData.constellations.flatMap((entry) =>
   Array.isArray(entry.constellations) ? entry.constellations : [entry],
 );
-console.log(constellations);
+let constellationsList = "";
+for (const constellation of constellations) {
+  constellationsList += "" + constellation.name + ", ";
+}
+console.log(constellationsList);
 const sketch = () => {
   return ({ context, width, height, time }) => {
     // Set secondary plantarium size
@@ -221,18 +221,16 @@ const sketch = () => {
       const centerX = ((bounds.minX + bounds.maxX) * width) / 2;
       const centerY = ((bounds.minY + bounds.maxY) * height) / 2;
       const textAngle = Math.atan2(centerY - height / 2, centerX - width / 2);
-      const distanceFromSkyCenter = Math.hypot(
-        centerX - width / 2,
-        centerY - height / 2,
+      const textRadius = Math.hypot(centerX - width / 2, centerY - height / 2);
+
+      const boundsSpan = Math.hypot(
+        bounds.maxX - bounds.minX,
+        bounds.maxY - bounds.minY,
       );
-      const nearestCircleIndex = Math.max(
-        1,
-        Math.min(6, Math.round(distanceFromSkyCenter / firstCircleRadius)),
-      );
-      const textRadius = firstCircleRadius * nearestCircleIndex;
+      const fontSize = Math.round(10 + Math.min(boundsSpan / 0.5, 1) * 6);
 
       context.fillStyle = "LightSkyBlue";
-      context.font = "16px sans-serif";
+      context.font = `${fontSize}px sans-serif`;
       context.textAlign = "center";
       context.textBaseline = "middle";
       context.strokeStyle = "MidnightBlue";
