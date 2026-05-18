@@ -36,10 +36,11 @@ const raDecToXY = (ra, dec) => {
   // RA: 0–24 horas
   // DEC: -90 a +90 grados
 
-  const angle = (1 - ra / 24) * 2 * Math.PI;
+  const rotationOffset = Math.PI / 2; // prueba 90°
+  const angle = (1 - ra / 24) * 2 * Math.PI + rotationOffset;
 
-  // radio: 0 en el centro (DEC=90), 1 en el borde (DEC=0)
-  const radius = (90 - dec) / 90;
+  // radius is normalized to the canvas half-size so DEC=0 lands on the rim
+  const radius = ((90 - dec) / 90) * 0.5;
 
   const xPos = 0.5 + radius * Math.cos(angle);
   const yPos = 0.5 - radius * Math.sin(angle); // ← importante invertir Y
@@ -201,7 +202,7 @@ const sketch = () => {
             endStar.xPos * width,
             endStar.yPos * height,
           );
-          planetariumContext.lineWidth = 2;
+          planetariumContext.lineWidth = 1;
           planetariumContext.strokeStyle = "PaleGoldenRod";
           planetariumContext.stroke();
         }
