@@ -257,3 +257,14 @@ const sketch = () => {
 };
 
 canvasSketch(sketch, settings);
+
+/* TODOs  
+- Imporve draco unions
+- Improve other constellations shapes
+- Change size and brightness of stars based on their magnitude and size (units are different)
+- Think how can Aquarius and Capricorn be visible
+- Recover second canvas to simplify scaling and rotation
+- Visible star's names on hover
+- Implement tweakpanel with options
+
+*/
