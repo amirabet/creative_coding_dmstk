@@ -29,16 +29,15 @@ const getStarFillColor = (brightness) => {
 
 const getStarBlinkAmount = (time, x, y, brightness) => {
   const phaseOffset = x * 17 + y * 31 + brightness * 2;
-  const pulse = (Math.sin(time * 4 + phaseOffset) + 1) / 2;
+  const pulse = (Math.sin(time * 2 + phaseOffset) + 1) / 2;
 
   return 0.45 + pulse * 0.55;
 };
 
-const raDecToXY = (ra, dec) => {
+const raDecToXY = (ra, dec, rotationOffset) => {
   // RA: 0–24 horas
   // DEC: -90 a +90 grados
 
-  const rotationOffset = Math.PI / 2; // prueba 90°
   const angle = (1 - ra / 24) * 2 * Math.PI + rotationOffset;
 
   // radius is normalized to the canvas half-size so DEC=0 lands on the rim
@@ -97,11 +96,26 @@ const planetariumCanvasContext = planetariumCanvas.getContext("2d");
 const constellations = constellationsData.constellations.flatMap((entry) =>
   Array.isArray(entry.constellations) ? entry.constellations : [entry],
 );
+// Convert a 1-based day-of-year to a short readable date string (e.g. "Mar 24").
+// Uses a fixed non-leap year so day 1 = Jan 1 and day 365 = Dec 31.
+const dayOfYearToDate = (day) =>
+  new Date(2001, 0, day).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+
+// Day 83 (March 24) → rotationOffset = π/2 (the original hardcoded value).
+// BASE is back-calculated so that calibration stays when dayOfYear = 83.
+const DAY_OFFSET_BASE = Math.PI / 2 - (83 / 365.25) * 2 * Math.PI;
+
 // Tweakpane controls
 const params = {
   showConstellationName: true,
   showConstellationLines: true,
   showStarNames: "none",
+  dayOfYear: 83,
+  date: dayOfYearToDate(83),
+  autoplay: false,
 };
 
 const starNameOptions = { None: "none", "User action": "on_hover" };
@@ -120,6 +134,33 @@ pane.addInput(params, "showStarNames", {
   label: "Show star names",
   options: starNameOptions,
 });
+const dateFolder = pane.addFolder({ title: "Date" });
+let autoplayInterval = null;
+const dayOfYearBinding = dateFolder
+  .addInput(params, "dayOfYear", {
+    label: "Day of year",
+    min: 1,
+    max: 365,
+    step: 1,
+  })
+  .on("change", () => {
+    params.date = dayOfYearToDate(params.dayOfYear);
+  });
+dateFolder.addMonitor(params, "date", { label: "Date", interval: 50 });
+dateFolder
+  .addInput(params, "autoplay", { label: "Autoplay" })
+  .on("change", () => {
+    if (params.autoplay) {
+      autoplayInterval = setInterval(() => {
+        params.dayOfYear = params.dayOfYear >= 365 ? 1 : params.dayOfYear + 1;
+        params.date = dayOfYearToDate(params.dayOfYear);
+        dayOfYearBinding.refresh();
+      }, 50);
+    } else {
+      clearInterval(autoplayInterval);
+      autoplayInterval = null;
+    }
+  });
 
 // Mouse position in main canvas logical coordinates (initialised off-screen)
 const mousePos = { x: -9999, y: -9999 };
@@ -225,12 +266,17 @@ const sketch = () => {
       planetariumCanvasContext.stroke();
     }
 
+    // Rotation offset derived from the selected day of year.
+    // The sky at midnight makes one full rotation per year: +2π / 365.25 per day.
+    const rotationOffset =
+      DAY_OFFSET_BASE + (params.dayOfYear / 365.25) * 2 * Math.PI;
+
     // loop all constellations
     for (const constellation of constellations) {
       const starsByName = Object.fromEntries(
         constellation.stars.map((star) => [
           star.name,
-          { ...star, ...raDecToXY(star.ra, star.dec) },
+          { ...star, ...raDecToXY(star.ra, star.dec, rotationOffset) },
         ]),
       );
       const bounds = Object.values(starsByName).reduce(
