@@ -121,12 +121,57 @@ pane.addInput(params, "showStarNames", {
   options: starNameOptions,
 });
 
+// Mouse position in main canvas logical coordinates (initialised off-screen)
+const mousePos = { x: -9999, y: -9999 };
+let canvasListenerAttached = false;
+
 const sketch = () => {
   return ({ context, width, height, time }) => {
     // Set secondary plantarium size at 1.9x to match drawImage scale (avoids upscale blur)
     planetariumCanvas.width = Math.round(width * 1.9);
     planetariumCanvas.height = Math.round(height * 1.9);
     planetariumCanvasContext.scale(1.9, 1.9);
+
+    // Attach mouse/touch listeners once so we can track hover/touch position
+    if (!canvasListenerAttached) {
+      const canvasEl = context.canvas;
+
+      const setFromClient = (clientX, clientY) => {
+        const rect = canvasEl.getBoundingClientRect();
+        mousePos.x = (clientX - rect.left) * (width / rect.width);
+        mousePos.y = (clientY - rect.top) * (height / rect.height);
+      };
+      const clear = () => {
+        mousePos.x = -9999;
+        mousePos.y = -9999;
+      };
+
+      canvasEl.addEventListener("mousemove", (e) =>
+        setFromClient(e.clientX, e.clientY),
+      );
+      canvasEl.addEventListener("mouseleave", clear);
+
+      canvasEl.addEventListener(
+        "touchstart",
+        (e) => {
+          e.preventDefault();
+          setFromClient(e.touches[0].clientX, e.touches[0].clientY);
+        },
+        { passive: false },
+      );
+      canvasEl.addEventListener(
+        "touchmove",
+        (e) => {
+          e.preventDefault();
+          setFromClient(e.touches[0].clientX, e.touches[0].clientY);
+        },
+        { passive: false },
+      );
+      canvasEl.addEventListener("touchend", clear);
+      canvasEl.addEventListener("touchcancel", clear);
+
+      canvasListenerAttached = true;
+    }
 
     // Radius for planetary Canvas
     // const radGradient = context.createRadialGradient(
@@ -307,6 +352,40 @@ const sketch = () => {
             star.yPos * height,
           );
           planetariumCanvasContext.restore();
+        }
+      }
+
+      // Paint star name on hover
+      // drawImage places the secondary canvas at dx=-0.45*width, dy=-0.88*height at scale 1.9,
+      // so the inverse mapping to secondary canvas logical coords is:
+      if (params.showStarNames === "on_hover") {
+        const logMouseX = (mousePos.x + 0.45 * width) / 1.9;
+        const logMouseY = (mousePos.y + 0.88 * height) / 1.9;
+        for (const star of Object.values(starsByName)) {
+          const dist = Math.hypot(
+            logMouseX - star.xPos * width,
+            logMouseY - star.yPos * height,
+          );
+          if (dist < 12) {
+            planetariumCanvasContext.save();
+            planetariumCanvasContext.font = "bold 10px sans-serif";
+            planetariumCanvasContext.textAlign = "left";
+            planetariumCanvasContext.textBaseline = "middle";
+            planetariumCanvasContext.strokeStyle = "MidnightBlue";
+            planetariumCanvasContext.lineWidth = 3;
+            planetariumCanvasContext.fillStyle = "white";
+            planetariumCanvasContext.strokeText(
+              star.name,
+              star.xPos * width + 7,
+              star.yPos * height,
+            );
+            planetariumCanvasContext.fillText(
+              star.name,
+              star.xPos * width + 7,
+              star.yPos * height,
+            );
+            planetariumCanvasContext.restore();
+          }
         }
       }
     }
