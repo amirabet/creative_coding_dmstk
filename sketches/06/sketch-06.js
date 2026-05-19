@@ -263,10 +263,10 @@ const sketch = () => {
     // Big scale
     context.drawImage(
       planetariumCanvas,
-      (width - width * 1.8) / 2,
+      (width - width * 1.9) / 2,
       -height * 0.88,
-      width * 1.8,
-      height * 1.8,
+      width * 1.9,
+      height * 1.9,
     );
     // Scale 1:1
     //context.drawImage(planetariumCanvas, 0, 0, width, height);
