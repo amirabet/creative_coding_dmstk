@@ -91,8 +91,8 @@ const drawTextOnArc = (
 };
 
 // Create a new secondary canvas to render the character / type
-// const planetariumCanvas = document.createElement("canvas");
-// const context = planetariumCanvas.getContext("2d");
+const planetariumCanvas = document.createElement("canvas");
+const planetariumCanvasContext = planetariumCanvas.getContext("2d");
 const constellations = constellationsData.constellations.flatMap((entry) =>
   Array.isArray(entry.constellations) ? entry.constellations : [entry],
 );
@@ -104,8 +104,8 @@ console.log(constellationsList);
 const sketch = () => {
   return ({ context, width, height, time }) => {
     // Set secondary plantarium size
-    // planetariumCanvas.width = width;
-    // planetariumCanvas.height = height;
+    planetariumCanvas.width = width;
+    planetariumCanvas.height = height;
 
     // Radius for planetary Canvas
     // const radGradient = context.createRadialGradient(
@@ -121,8 +121,8 @@ const sketch = () => {
     // radGradient.addColorStop(1, "DarkBlue");
     // context.fillStyle = radGradient;
 
-    context.fillStyle = "MidnightBlue";
-    context.fillRect(0, 0, width, height);
+    planetariumCanvasContext.fillStyle = "MidnightBlue";
+    planetariumCanvasContext.fillRect(0, 0, width, height);
 
     // Create circles and lines for sky map
     const centerX = width / 2;
@@ -131,11 +131,17 @@ const sketch = () => {
     const lastCircleRadius = (width / 12.2) * 6;
 
     for (let i = 0; i < 6; i++) {
-      context.beginPath();
-      context.arc(centerX, centerY, (width / 12.2) * (i + 1), 0, Math.PI * 2);
-      context.strokeStyle = "RoyalBlue";
-      context.lineWidth = 1;
-      context.stroke();
+      planetariumCanvasContext.beginPath();
+      planetariumCanvasContext.arc(
+        centerX,
+        centerY,
+        (width / 12.2) * (i + 1),
+        0,
+        Math.PI * 2,
+      );
+      planetariumCanvasContext.strokeStyle = "RoyalBlue";
+      planetariumCanvasContext.lineWidth = 1;
+      planetariumCanvasContext.stroke();
     }
 
     for (let i = 0; i < 24; i++) {
@@ -145,12 +151,12 @@ const sketch = () => {
       const endX = centerX + Math.cos(angle) * lastCircleRadius;
       const endY = centerY + Math.sin(angle) * lastCircleRadius;
 
-      context.beginPath();
-      context.moveTo(startX, startY);
-      context.lineTo(endX, endY);
-      context.strokeStyle = "RoyalBlue";
-      context.lineWidth = 1;
-      context.stroke();
+      planetariumCanvasContext.beginPath();
+      planetariumCanvasContext.moveTo(startX, startY);
+      planetariumCanvasContext.lineTo(endX, endY);
+      planetariumCanvasContext.strokeStyle = "RoyalBlue";
+      planetariumCanvasContext.lineWidth = 1;
+      planetariumCanvasContext.stroke();
     }
 
     // loop all constellations
@@ -177,8 +183,8 @@ const sketch = () => {
       );
 
       // Paint Lines
-      context.strokeStyle = "LightCyan";
-      context.lineWidth = 2;
+      planetariumCanvasContext.strokeStyle = "LightCyan";
+      planetariumCanvasContext.lineWidth = 2;
 
       for (const path of constellation.paths) {
         for (let i = 0; i < path.length - 1; i++) {
@@ -187,12 +193,18 @@ const sketch = () => {
 
           if (!startStar || !endStar) continue;
 
-          context.beginPath();
-          context.moveTo(startStar.xPos * width, startStar.yPos * height);
-          context.lineTo(endStar.xPos * width, endStar.yPos * height);
-          context.lineWidth = 1;
-          context.strokeStyle = "PaleGoldenRod";
-          context.stroke();
+          planetariumCanvasContext.beginPath();
+          planetariumCanvasContext.moveTo(
+            startStar.xPos * width,
+            startStar.yPos * height,
+          );
+          planetariumCanvasContext.lineTo(
+            endStar.xPos * width,
+            endStar.yPos * height,
+          );
+          planetariumCanvasContext.lineWidth = 1;
+          planetariumCanvasContext.strokeStyle = "PaleGoldenRod";
+          planetariumCanvasContext.stroke();
         }
       }
 
@@ -200,24 +212,24 @@ const sketch = () => {
       for (const star of Object.values(starsByName)) {
         const { ra, dec, xPos, yPos, magnitude, brightness } = star;
         const blinkAmount = getStarBlinkAmount(time, xPos, yPos, brightness);
-        context.save();
-        context.globalAlpha = blinkAmount;
-        context.fillStyle = getStarFillColor(brightness);
-        context.beginPath();
+        planetariumCanvasContext.save();
+        planetariumCanvasContext.globalAlpha = blinkAmount;
+        planetariumCanvasContext.fillStyle = getStarFillColor(brightness);
+        planetariumCanvasContext.beginPath();
         // magnitude = apparent magnitude (m); lower m = bigger/brighter star
         const pixelmagnitude = Math.max(0.5, (6.5 - magnitude) * 1.5);
-        context.arc(
+        planetariumCanvasContext.arc(
           xPos * width,
           yPos * height,
           pixelmagnitude * (0.45 + blinkAmount * 0.25),
           0,
           Math.PI * 2,
         );
-        context.fill();
-        context.lineWidth = 1;
-        context.strokeStyle = "PaleGoldenRod";
-        context.stroke();
-        context.restore();
+        planetariumCanvasContext.fill();
+        planetariumCanvasContext.lineWidth = 1;
+        planetariumCanvasContext.strokeStyle = "PaleGoldenRod";
+        planetariumCanvasContext.stroke();
+        planetariumCanvasContext.restore();
       }
 
       // Paint constellations' name
@@ -232,14 +244,14 @@ const sketch = () => {
       );
       const fontmagnitude = Math.round(10 + Math.min(boundsSpan / 0.5, 1) * 6);
 
-      context.fillStyle = "LightSkyBlue";
-      context.font = `${fontmagnitude}px sans-serif`;
-      context.textAlign = "center";
-      context.textBaseline = "middle";
-      context.strokeStyle = "MidnightBlue";
-      context.lineWidth = 4;
+      planetariumCanvasContext.fillStyle = "LightSkyBlue";
+      planetariumCanvasContext.font = `${fontmagnitude}px sans-serif`;
+      planetariumCanvasContext.textAlign = "center";
+      planetariumCanvasContext.textBaseline = "middle";
+      planetariumCanvasContext.strokeStyle = "MidnightBlue";
+      planetariumCanvasContext.lineWidth = 4;
       drawTextOnArc(
-        context,
+        planetariumCanvasContext,
         constellation.name.toUpperCase(),
         width / 2,
         height / 2,
@@ -248,13 +260,15 @@ const sketch = () => {
       );
     }
     // Paint the planetary canvas in the main canvas
-    // context.drawImage(
-    //   planetariumCanvas,
-    //   (width - width * 1.8) / 2,
-    //   -height * 0.88,
-    //   width * 1.8,
-    //   height * 1.8,
-    // );
+    // Big scale
+    context.drawImage(
+      planetariumCanvas,
+      (width - width * 1.8) / 2,
+      -height * 0.88,
+      width * 1.8,
+      height * 1.8,
+    );
+    // Scale 1:1
     //context.drawImage(planetariumCanvas, 0, 0, width, height);
   };
 };
