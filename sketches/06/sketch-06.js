@@ -1,4 +1,5 @@
 const canvasSketch = require("canvas-sketch");
+const tweakPane = require("tweakpane");
 
 const constellationsData = require("./constellations_v3.json");
 
@@ -96,16 +97,36 @@ const planetariumCanvasContext = planetariumCanvas.getContext("2d");
 const constellations = constellationsData.constellations.flatMap((entry) =>
   Array.isArray(entry.constellations) ? entry.constellations : [entry],
 );
-let constellationsList = "";
+// Tweakpane controls
+const params = {
+  showConstellationName: true,
+  showConstellationLines: true,
+  showStarNames: "none",
+};
+
+const starNameOptions = { None: "none", "On hover": "on_hover" };
 for (const constellation of constellations) {
-  constellationsList += "" + constellation.name + ", ";
+  starNameOptions[constellation.name] = constellation.name;
 }
-console.log(constellationsList);
+
+const pane = new tweakPane.Pane({ title: "Planetarium" });
+pane.addInput(params, "showConstellationName", {
+  label: "Show constellation name",
+});
+pane.addInput(params, "showConstellationLines", {
+  label: "Show constellation lines",
+});
+pane.addInput(params, "showStarNames", {
+  label: "Show star names",
+  options: starNameOptions,
+});
+
 const sketch = () => {
   return ({ context, width, height, time }) => {
-    // Set secondary plantarium size
-    planetariumCanvas.width = width;
-    planetariumCanvas.height = height;
+    // Set secondary plantarium size at 1.9x to match drawImage scale (avoids upscale blur)
+    planetariumCanvas.width = Math.round(width * 1.9);
+    planetariumCanvas.height = Math.round(height * 1.9);
+    planetariumCanvasContext.scale(1.9, 1.9);
 
     // Radius for planetary Canvas
     // const radGradient = context.createRadialGradient(
@@ -183,28 +204,27 @@ const sketch = () => {
       );
 
       // Paint Lines
-      planetariumCanvasContext.strokeStyle = "LightCyan";
-      planetariumCanvasContext.lineWidth = 2;
+      if (params.showConstellationLines) {
+        for (const path of constellation.paths) {
+          for (let i = 0; i < path.length - 1; i++) {
+            const startStar = starsByName[path[i]];
+            const endStar = starsByName[path[i + 1]];
 
-      for (const path of constellation.paths) {
-        for (let i = 0; i < path.length - 1; i++) {
-          const startStar = starsByName[path[i]];
-          const endStar = starsByName[path[i + 1]];
+            if (!startStar || !endStar) continue;
 
-          if (!startStar || !endStar) continue;
-
-          planetariumCanvasContext.beginPath();
-          planetariumCanvasContext.moveTo(
-            startStar.xPos * width,
-            startStar.yPos * height,
-          );
-          planetariumCanvasContext.lineTo(
-            endStar.xPos * width,
-            endStar.yPos * height,
-          );
-          planetariumCanvasContext.lineWidth = 1;
-          planetariumCanvasContext.strokeStyle = "PaleGoldenRod";
-          planetariumCanvasContext.stroke();
+            planetariumCanvasContext.beginPath();
+            planetariumCanvasContext.moveTo(
+              startStar.xPos * width,
+              startStar.yPos * height,
+            );
+            planetariumCanvasContext.lineTo(
+              endStar.xPos * width,
+              endStar.yPos * height,
+            );
+            planetariumCanvasContext.lineWidth = 1;
+            planetariumCanvasContext.strokeStyle = "PaleGoldenRod";
+            planetariumCanvasContext.stroke();
+          }
         }
       }
 
@@ -233,31 +253,62 @@ const sketch = () => {
       }
 
       // Paint constellations' name
-      const centerX = ((bounds.minX + bounds.maxX) * width) / 2;
-      const centerY = ((bounds.minY + bounds.maxY) * height) / 2;
-      const textAngle = Math.atan2(centerY - height / 2, centerX - width / 2);
-      const textRadius = Math.hypot(centerX - width / 2, centerY - height / 2);
+      if (params.showConstellationName) {
+        const centerX = ((bounds.minX + bounds.maxX) * width) / 2;
+        const centerY = ((bounds.minY + bounds.maxY) * height) / 2;
+        const textAngle = Math.atan2(centerY - height / 2, centerX - width / 2);
+        const textRadius = Math.hypot(
+          centerX - width / 2,
+          centerY - height / 2,
+        );
 
-      const boundsSpan = Math.hypot(
-        bounds.maxX - bounds.minX,
-        bounds.maxY - bounds.minY,
-      );
-      const fontmagnitude = Math.round(10 + Math.min(boundsSpan / 0.5, 1) * 6);
+        const boundsSpan = Math.hypot(
+          bounds.maxX - bounds.minX,
+          bounds.maxY - bounds.minY,
+        );
+        const fontmagnitude = Math.round(
+          10 + Math.min(boundsSpan / 0.5, 1) * 6,
+        );
 
-      planetariumCanvasContext.fillStyle = "LightSkyBlue";
-      planetariumCanvasContext.font = `${fontmagnitude}px sans-serif`;
-      planetariumCanvasContext.textAlign = "center";
-      planetariumCanvasContext.textBaseline = "middle";
-      planetariumCanvasContext.strokeStyle = "MidnightBlue";
-      planetariumCanvasContext.lineWidth = 4;
-      drawTextOnArc(
-        planetariumCanvasContext,
-        constellation.name.toUpperCase(),
-        width / 2,
-        height / 2,
-        textRadius,
-        textAngle,
-      );
+        planetariumCanvasContext.fillStyle = "LightSkyBlue";
+        planetariumCanvasContext.font = `${fontmagnitude}px sans-serif`;
+        planetariumCanvasContext.textAlign = "center";
+        planetariumCanvasContext.textBaseline = "middle";
+        planetariumCanvasContext.strokeStyle = "MidnightBlue";
+        planetariumCanvasContext.lineWidth = 4;
+        drawTextOnArc(
+          planetariumCanvasContext,
+          constellation.name.toUpperCase(),
+          width / 2,
+          height / 2,
+          textRadius,
+          textAngle,
+        );
+      }
+
+      // Paint star names for the selected constellation
+      if (params.showStarNames === constellation.name) {
+        for (const star of Object.values(starsByName)) {
+          planetariumCanvasContext.save();
+          planetariumCanvasContext.font = "9px sans-serif";
+          planetariumCanvasContext.textAlign = "left";
+          planetariumCanvasContext.textBaseline = "middle";
+          planetariumCanvasContext.strokeStyle = "MidnightBlue";
+          planetariumCanvasContext.lineWidth = 3;
+          planetariumCanvasContext.fillStyle = "white";
+          planetariumCanvasContext.strokeText(
+            star.name,
+            star.xPos * width + 7,
+            star.yPos * height,
+          );
+          planetariumCanvasContext.fillText(
+            star.name,
+            star.xPos * width + 7,
+            star.yPos * height,
+          );
+          planetariumCanvasContext.restore();
+        }
+      }
     }
     // Paint the planetary canvas in the main canvas
     // Big scale
@@ -276,12 +327,6 @@ const sketch = () => {
 canvasSketch(sketch, settings);
 
 /* TODOs  
-- Imporve draco unions
-- Improve other constellations shapes
-- Change magnitude and brightness of stars based on their magnitude and magnitude (units are different)
 - Think how can Aquarius and Capricorn be visible
-- Recover second canvas to simplify scaling and rotation
 - Visible star's names on hover
-- Implement tweakpanel with options
-
 */
