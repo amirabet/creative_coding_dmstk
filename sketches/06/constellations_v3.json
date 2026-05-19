@@ -656,7 +656,7 @@
         ["Ain", "Aldebaran", "Hyadum II", "Hyadum I"],
         ["Aldebaran", "Elnath"],
         ["Aldebaran", "Tianguan"],
-        ["Alcyone", "Atlas", "Electra"]
+        ["Ain", "Alcyone", "Atlas", "Electra"]
       ]
     },
     {
@@ -734,9 +734,34 @@
           "dec": -19.382,
           "brightness": 0.0483,
           "magnitude": 3.29
+        },
+        {
+          "name": "Gamma Lib",
+          "ra": 15.592,
+          "dec": -14.789,
+          "brightness": 0.0273,
+          "magnitude": 3.91
+        },
+        {
+          "name": "Theta Lib",
+          "ra": 15.897,
+          "dec": -16.729,
+          "brightness": 0.0221,
+          "magnitude": 4.14
+        },
+        {
+          "name": "Upsilon Lib",
+          "ra": 15.617,
+          "dec": -28.135,
+          "brightness": 0.0363,
+          "magnitude": 3.6
         }
       ],
-      "paths": [["Zubenelgenubi", "Zubeneschamali", "Brachium"]]
+      "paths": [
+        ["Zubeneschamali", "Zubenelgenubi", "Gamma Lib", "Zubeneschamali"],
+        ["Gamma Lib", "Theta Lib", "Brachium"],
+        ["Zubenelgenubi", "Upsilon Lib"]
+      ]
     },
     {
       "name": "Sagittarius",
@@ -935,11 +960,69 @@
           "dec": 5.629,
           "brightness": 0.0223,
           "magnitude": 4.13
+        },
+        {
+          "name": "Omega Psc",
+          "ra": 23.988,
+          "dec": 6.863,
+          "brightness": 0.0249,
+          "magnitude": 4.01
+        },
+        {
+          "name": "Kappa Psc",
+          "ra": 23.448,
+          "dec": 1.255,
+          "brightness": 0.0106,
+          "magnitude": 4.94
+        },
+        {
+          "name": "Lambda Psc",
+          "ra": 23.704,
+          "dec": 1.784,
+          "brightness": 0.0158,
+          "magnitude": 4.5
+        },
+        {
+          "name": "Delta Psc",
+          "ra": 0.481,
+          "dec": 7.585,
+          "brightness": 0.0169,
+          "magnitude": 4.43
+        },
+        {
+          "name": "Epsilon Psc",
+          "ra": 1.049,
+          "dec": 7.891,
+          "brightness": 0.0194,
+          "magnitude": 4.28
+        },
+        {
+          "name": "Omicron Psc",
+          "ra": 1.756,
+          "dec": 9.176,
+          "brightness": 0.0198,
+          "magnitude": 4.26
         }
       ],
       "paths": [
-        ["Gamma Psc", "Theta Psc", "Iota Psc", "Fumalsamakah"],
-        ["Fumalsamakah", "Alrescha", "Eta Piscium"]
+        [
+          "Eta Piscium",
+          "Omicron Psc",
+          "Alrescha",
+          "Epsilon Psc",
+          "Delta Psc",
+          "Fumalsamakah",
+          "Omega Psc"
+        ],
+        [
+          "Omega Psc",
+          "Iota Psc",
+          "Lambda Psc",
+          "Kappa Psc",
+          "Gamma Psc",
+          "Theta Psc",
+          "Omega Psc"
+        ]
       ]
     },
     {
@@ -1368,9 +1451,17 @@
         }
       ],
       "paths": [
-        ["Thuban", "Edasich", "Altais"],
-        ["Altais", "Grumium", "Eltanin", "Rastaban", "Grumium", "Kuma"],
-        ["Kuma", "Tyl", "Giausar", "Dziban", "Aldhibah", "Alrakis"]
+        ["Grumium", "Eltanin", "Rastaban", "Grumium"],
+        [
+          "Grumium",
+          "Tyl",
+          "Giausar",
+          "Dziban",
+          "Kuma",
+          "Altais",
+          "Thuban",
+          "Edasich"
+        ]
       ]
     },
     {
@@ -1515,7 +1606,7 @@
       ],
       "paths": [
         ["Eta Her", "Pi Her", "Sarin", "Zeta Her", "Eta Her"],
-        ["Zeta Her", "Kornephoros", "Rasalgethi"],
+        ["Zeta Her", "Kornephoros"],
         ["Sarin", "Rasalgethi"],
         ["Pi Her", "Mu Her"]
       ]
@@ -2048,6 +2139,173 @@
         }
       ],
       "paths": [["Mothallah", "Beta Tri", "Gamma Tri", "Mothallah"]]
+    },
+    {
+      "name": "Equuleus",
+      "stars": [
+        {
+          "name": "Kitalpha",
+          "ra": 21.263,
+          "dec": 5.247,
+          "brightness": 0.027,
+          "magnitude": 3.92
+        },
+        {
+          "name": "Delta Equ",
+          "ra": 21.241,
+          "dec": 10.006,
+          "brightness": 0.0163,
+          "magnitude": 4.47
+        },
+        {
+          "name": "Gamma Equ",
+          "ra": 21.173,
+          "dec": 10.132,
+          "brightness": 0.0133,
+          "magnitude": 4.69
+        },
+        {
+          "name": "Zeta Equ",
+          "ra": 21.215,
+          "dec": 7.575,
+          "brightness": 0.0129,
+          "magnitude": 4.72
+        },
+        {
+          "name": "Lambda Equ",
+          "ra": 20.984,
+          "dec": 7.889,
+          "brightness": 0.0119,
+          "magnitude": 4.81
+        }
+      ],
+      "paths": [
+        ["Lambda Equ", "Kitalpha", "Zeta Equ", "Gamma Equ", "Delta Equ"]
+      ]
+    },
+    {
+      "name": "Hydra",
+      "stars": [
+        {
+          "name": "Alphard",
+          "ra": 9.459,
+          "dec": -8.658,
+          "brightness": 0.1614,
+          "magnitude": 1.98
+        },
+        {
+          "name": "Zeta Hya",
+          "ra": 8.923,
+          "dec": 5.946,
+          "brightness": 0.057,
+          "magnitude": 3.11
+        },
+        {
+          "name": "Epsilon Hya",
+          "ra": 8.779,
+          "dec": 6.418,
+          "brightness": 0.0445,
+          "magnitude": 3.38
+        },
+        {
+          "name": "Nu Hya",
+          "ra": 10.827,
+          "dec": -16.193,
+          "brightness": 0.057,
+          "magnitude": 3.11
+        },
+        {
+          "name": "Mu Hya",
+          "ra": 10.434,
+          "dec": -16.836,
+          "brightness": 0.0294,
+          "magnitude": 3.83
+        },
+        {
+          "name": "Xi Hya",
+          "ra": 11.55,
+          "dec": -31.857,
+          "brightness": 0.0384,
+          "magnitude": 3.54
+        },
+        {
+          "name": "Gamma Hya",
+          "ra": 13.315,
+          "dec": -23.171,
+          "brightness": 0.0631,
+          "magnitude": 3
+        },
+        {
+          "name": "Theta Hya",
+          "ra": 9.239,
+          "dec": 2.315,
+          "brightness": 0.0275,
+          "magnitude": 3.9
+        },
+        {
+          "name": "Iota Hya",
+          "ra": 9.664,
+          "dec": -1.142,
+          "brightness": 0.0281,
+          "magnitude": 3.88
+        }
+      ],
+      "paths": [
+        [
+          "Zeta Hya",
+          "Epsilon Hya",
+          "Alphard",
+          "Nu Hya",
+          "Mu Hya",
+          "Xi Hya",
+          "Gamma Hya"
+        ],
+        ["Alphard", "Theta Hya", "Iota Hya"]
+      ]
+    },
+    {
+      "name": "Sextans",
+      "stars": [
+        {
+          "name": "Alpha Sex",
+          "ra": 10.132,
+          "dec": -0.371,
+          "brightness": 0.0161,
+          "magnitude": 4.48
+        },
+        {
+          "name": "Beta Sex",
+          "ra": 10.504,
+          "dec": -0.637,
+          "brightness": 0.0094,
+          "magnitude": 5.07
+        },
+        {
+          "name": "Gamma Sex",
+          "ra": 9.875,
+          "dec": -8.106,
+          "brightness": 0.0093,
+          "magnitude": 5.08
+        },
+        {
+          "name": "Delta Sex",
+          "ra": 10.492,
+          "dec": -2.739,
+          "brightness": 0.0084,
+          "magnitude": 5.19
+        },
+        {
+          "name": "Epsilon Sex",
+          "ra": 10.321,
+          "dec": -8.662,
+          "brightness": 0.008,
+          "magnitude": 5.24
+        }
+      ],
+      "paths": [
+        ["Alpha Sex", "Delta Sex", "Gamma Sex", "Epsilon Sex"],
+        ["Alpha Sex", "Beta Sex"]
+      ]
     }
   ]
 }

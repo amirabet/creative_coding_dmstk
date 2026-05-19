@@ -8,7 +8,7 @@ const settings = {
 };
 
 const getStarFillColor = (brightness) => {
-  const minColor = { red: 0, green: 0, blue: 205 };
+  const minColor = { red: 135, green: 206, blue: 250 };
   const maxColor = { red: 224, green: 255, blue: 255 };
   // brightness = 10^(-0.4*m); brightest stars ~1.0, dimmest ~0.01
   const intensity = Math.max(0, Math.min(brightness, 1.0));
@@ -41,7 +41,7 @@ const raDecToXY = (ra, dec) => {
   const angle = (1 - ra / 24) * 2 * Math.PI + rotationOffset;
 
   // radius is normalized to the canvas half-size so DEC=0 lands on the rim
-  const radius = ((90 - dec) / 90) * 0.5;
+  const radius = ((90 - dec) / 90) * 0.45;
 
   const xPos = 0.5 + radius * Math.cos(angle);
   const yPos = 0.5 - radius * Math.sin(angle); // ← importante invertir Y
