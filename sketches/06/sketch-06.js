@@ -104,7 +104,7 @@ const params = {
   showStarNames: "none",
 };
 
-const starNameOptions = { None: "none", "On hover": "on_hover" };
+const starNameOptions = { None: "none", "User action": "on_hover" };
 for (const constellation of constellations) {
   starNameOptions[constellation.name] = constellation.name;
 }
