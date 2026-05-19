@@ -44,7 +44,7 @@ const raDecToXY = (ra, dec, rotationOffset) => {
   const radius = ((90 - dec) / 90) * 0.45;
 
   const xPos = 0.5 + radius * Math.cos(angle);
-  const yPos = 0.5 - radius * Math.sin(angle); // ← importante invertir Y
+  const yPos = 0.5 - radius * Math.sin(angle);
 
   return { xPos, yPos };
 };
@@ -109,12 +109,16 @@ const dayOfYearToDate = (day) =>
 const DAY_OFFSET_BASE = Math.PI / 2 - (83 / 365.25) * 2 * Math.PI;
 
 // Tweakpane controls
+const _today = new Date();
+const _todayDay = Math.floor(
+  (_today - new Date(_today.getFullYear(), 0, 0)) / 86400000,
+);
 const params = {
   showConstellationName: true,
   showConstellationLines: true,
   showStarNames: "none",
-  dayOfYear: 83,
-  date: dayOfYearToDate(83),
+  dayOfYear: _todayDay,
+  date: dayOfYearToDate(_todayDay),
   autoplay: false,
 };
 
@@ -136,6 +140,8 @@ pane.addInput(params, "showStarNames", {
 });
 const dateFolder = pane.addFolder({ title: "Date" });
 let autoplayInterval = null;
+let todayAnimInterval = null;
+let autoplayBinding = null;
 const dayOfYearBinding = dateFolder
   .addInput(params, "dayOfYear", {
     label: "Day of year",
@@ -147,7 +153,36 @@ const dayOfYearBinding = dateFolder
     params.date = dayOfYearToDate(params.dayOfYear);
   });
 dateFolder.addMonitor(params, "date", { label: "Date", interval: 50 });
-dateFolder
+dateFolder.addButton({ title: "Today" }).on("click", () => {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  const targetDay = Math.floor((now - start) / 86400000);
+
+  if (targetDay === params.dayOfYear) return;
+
+  // Stop autoplay and any previous Today animation before starting a new one
+  if (autoplayInterval) {
+    clearInterval(autoplayInterval);
+    autoplayInterval = null;
+    params.autoplay = false;
+    if (autoplayBinding) autoplayBinding.refresh();
+  }
+  clearInterval(todayAnimInterval);
+
+  const dir = targetDay > params.dayOfYear ? 1 : -1;
+  todayAnimInterval = setInterval(() => {
+    const remaining = Math.abs(targetDay - params.dayOfYear);
+    const step = dir * Math.min(3, remaining);
+    params.dayOfYear += step;
+    params.date = dayOfYearToDate(params.dayOfYear);
+    dayOfYearBinding.refresh();
+    if (params.dayOfYear === targetDay) {
+      clearInterval(todayAnimInterval);
+      todayAnimInterval = null;
+    }
+  }, 10);
+});
+autoplayBinding = dateFolder
   .addInput(params, "autoplay", { label: "Autoplay" })
   .on("change", () => {
     if (params.autoplay) {
@@ -439,10 +474,10 @@ const sketch = () => {
     // Big scale
     context.drawImage(
       planetariumCanvas,
-      (width - width * 1.9) / 2,
-      -height * 0.88,
-      width * 1.9,
-      height * 1.9,
+      (width - width * 1.85) / 2,
+      -height * 0.85,
+      width * 1.85,
+      height * 1.85,
     );
     // Scale 1:1
     //context.drawImage(planetariumCanvas, 0, 0, width, height);
@@ -452,6 +487,6 @@ const sketch = () => {
 canvasSketch(sketch, settings);
 
 /* TODOs  
-- Think how can Aquarius and Capricorn be visible
-- Visible star's names on hover
+- Think how can Aquarius and Capricorn be visible => not possible...
+
 */
