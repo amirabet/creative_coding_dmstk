@@ -9,23 +9,69 @@ const settings = {
   animate: true,
 };
 
+// ─── Theme ─────────────────────────────────────────────────────────────────
+// Converts a theme {r, g, b} colour to a CSS rgb() string for canvas use.
+const toRgb = ({ r, g, b }) => `rgb(${r}, ${g}, ${b})`;
+
+const themes = {
+  blue: {
+    background: { r: 25, g: 25, b: 112 }, // MidnightBlue
+    grid: { r: 65, g: 105, b: 225 }, // RoyalBlue
+    constellationLine: { r: 238, g: 232, b: 170 }, // PaleGoldenRod
+    starStroke: { r: 238, g: 232, b: 170 }, // PaleGoldenRod
+    starDimColor: { r: 135, g: 206, b: 250 }, // LightSkyBlue
+    starBrightColor: { r: 224, g: 255, b: 255 },
+    constellationLabel: { r: 135, g: 206, b: 250 }, // LightSkyBlue
+    labelStroke: { r: 25, g: 25, b: 112 }, // MidnightBlue
+    starLabel: { r: 255, g: 255, b: 255 }, // white
+  },
+  monochrome: {
+    background: { r: 0, g: 0, b: 0 },
+    grid: { r: 50, g: 50, b: 50 },
+    constellationLine: { r: 112, g: 112, b: 112 },
+    starStroke: { r: 255, g: 255, b: 255 },
+    starDimColor: { r: 150, g: 150, b: 150 },
+    starBrightColor: { r: 255, g: 255, b: 255 },
+    constellationLabel: { r: 200, g: 200, b: 200 },
+    labelStroke: { r: 0, g: 0, b: 0 },
+    starLabel: { r: 255, g: 255, b: 255 },
+  },
+  nightmode: {
+    background: { r: 0, g: 0, b: 0 },
+    grid: { r: 100, g: 15, b: 15 },
+    constellationLine: { r: 180, g: 35, b: 15 },
+    starStroke: { r: 180, g: 35, b: 15 },
+    starDimColor: { r: 140, g: 25, b: 10 },
+    starBrightColor: { r: 255, g: 90, b: 30 },
+    constellationLabel: { r: 200, g: 45, b: 20 },
+    labelStroke: { r: 0, g: 0, b: 0 },
+    starLabel: { r: 220, g: 60, b: 25 },
+  },
+  light: {
+    background: { r: 255, g: 255, b: 255 },
+    grid: { r: 180, g: 180, b: 200 },
+    constellationLine: { r: 80, g: 100, b: 160 },
+    starStroke: { r: 60, g: 60, b: 120 },
+    starDimColor: { r: 120, g: 130, b: 180 },
+    starBrightColor: { r: 30, g: 30, b: 80 },
+    constellationLabel: { r: 60, g: 80, b: 160 },
+    labelStroke: { r: 255, g: 255, b: 255 },
+    starLabel: { r: 20, g: 20, b: 80 },
+  },
+};
+
+// Current applied theme
+const theme = { ...themes.blue };
+
 const getStarFillColor = (brightness) => {
-  const minColor = { red: 135, green: 206, blue: 250 };
-  const maxColor = { red: 224, green: 255, blue: 255 };
   // brightness = 10^(-0.4*m); brightest stars ~1.0, dimmest ~0.01
-  const intensity = Math.max(0, Math.min(brightness, 1.0));
-
-  const red = Math.round(
-    minColor.red + (maxColor.red - minColor.red) * intensity,
-  );
-  const green = Math.round(
-    minColor.green + (maxColor.green - minColor.green) * intensity,
-  );
-  const blue = Math.round(
-    minColor.blue + (maxColor.blue - minColor.blue) * intensity,
-  );
-
-  return `rgb(${red}, ${green}, ${blue})`;
+  const t = Math.max(0, Math.min(brightness, 1.0));
+  const lerp = (a, b) => Math.round(a + (b - a) * t);
+  return toRgb({
+    r: lerp(theme.starDimColor.r, theme.starBrightColor.r),
+    g: lerp(theme.starDimColor.g, theme.starBrightColor.g),
+    b: lerp(theme.starDimColor.b, theme.starBrightColor.b),
+  });
 };
 
 const getStarBlinkAmount = (time, x, y, brightness) => {
@@ -174,6 +220,8 @@ const params = {
   // Search state
   searchConstellation: SEARCH_NONE,
   searchStar: SEARCH_NONE,
+  // Theme
+  theme: "blue",
 };
 
 // ─── Pane ──────────────────────────────────────────────────────────────────
@@ -396,6 +444,47 @@ searchStarBinding = searchFolder
     rotateToRa(starRa);
   });
 
+// ─── Theme folder ────────────────────────────────────────────────────────
+const themeFolder = pane.addFolder({ title: "Theme" });
+const themePresetBinding = themeFolder.addInput(params, "theme", {
+  label: "Preset",
+  options: Object.fromEntries(
+    [...Object.keys(themes), "custom"].map((k) => [k, k]),
+  ),
+});
+
+themeFolder.addSeparator();
+const themeColorBindings = [
+  ["background", "Background"],
+  ["grid", "Grid"],
+  ["constellationLine", "Constellation line"],
+  ["starStroke", "Star stroke"],
+  ["starDimColor", "Star dim"],
+  ["starBrightColor", "Star bright"],
+  ["constellationLabel", "Constellation label"],
+  ["labelStroke", "Label stroke"],
+  ["starLabel", "Star label"],
+].map(([key, label]) => {
+  const b = themeFolder.addInput(theme, key, { label });
+  b.disabled = true;
+  return b;
+});
+
+themePresetBinding.on("change", () => {
+  if (params.theme === "custom") {
+    themeColorBindings.forEach((b) => {
+      b.disabled = false;
+    });
+  } else {
+    const preset = themes[params.theme];
+    if (preset) Object.assign(theme, preset);
+    themeColorBindings.forEach((b) => {
+      b.disabled = true;
+      b.refresh();
+    });
+  }
+});
+
 // Mouse position in main canvas logical coordinates (initialised off-screen)
 const mousePos = { x: -9999, y: -9999 };
 let canvasListenerAttached = false;
@@ -462,7 +551,7 @@ const sketch = () => {
     // radGradient.addColorStop(1, "DarkBlue");
     // context.fillStyle = radGradient;
 
-    planetariumCanvasContext.fillStyle = "MidnightBlue";
+    planetariumCanvasContext.fillStyle = toRgb(theme.background);
     planetariumCanvasContext.fillRect(0, 0, width, height);
 
     // Planetarium grid
@@ -482,7 +571,7 @@ const sketch = () => {
           0,
           Math.PI * 2,
         );
-        planetariumCanvasContext.strokeStyle = "RoyalBlue";
+        planetariumCanvasContext.strokeStyle = toRgb(theme.grid);
         planetariumCanvasContext.lineWidth = 1;
         planetariumCanvasContext.stroke();
       }
@@ -497,7 +586,7 @@ const sketch = () => {
         planetariumCanvasContext.beginPath();
         planetariumCanvasContext.moveTo(startX, startY);
         planetariumCanvasContext.lineTo(endX, endY);
-        planetariumCanvasContext.strokeStyle = "RoyalBlue";
+        planetariumCanvasContext.strokeStyle = toRgb(theme.grid);
         planetariumCanvasContext.lineWidth = 1;
         planetariumCanvasContext.stroke();
       }
@@ -553,7 +642,9 @@ const sketch = () => {
               endStar.yPos * height,
             );
             planetariumCanvasContext.lineWidth = 1;
-            planetariumCanvasContext.strokeStyle = "PaleGoldenRod";
+            planetariumCanvasContext.strokeStyle = toRgb(
+              theme.constellationLine,
+            );
             planetariumCanvasContext.stroke();
           }
         }
@@ -578,7 +669,7 @@ const sketch = () => {
         );
         planetariumCanvasContext.fill();
         planetariumCanvasContext.lineWidth = 1;
-        planetariumCanvasContext.strokeStyle = "PaleGoldenRod";
+        planetariumCanvasContext.strokeStyle = toRgb(theme.starStroke);
         planetariumCanvasContext.stroke();
         planetariumCanvasContext.restore();
       }
@@ -604,11 +695,11 @@ const sketch = () => {
           10 + Math.min(boundsSpan / 0.5, 1) * 6,
         );
 
-        planetariumCanvasContext.fillStyle = "LightSkyBlue";
+        planetariumCanvasContext.fillStyle = toRgb(theme.constellationLabel);
         planetariumCanvasContext.font = `${fontmagnitude}px sans-serif`;
         planetariumCanvasContext.textAlign = "center";
         planetariumCanvasContext.textBaseline = "middle";
-        planetariumCanvasContext.strokeStyle = "MidnightBlue";
+        planetariumCanvasContext.strokeStyle = toRgb(theme.labelStroke);
         planetariumCanvasContext.lineWidth = 4;
         drawTextOnArc(
           planetariumCanvasContext,
@@ -627,9 +718,9 @@ const sketch = () => {
           planetariumCanvasContext.font = "9px sans-serif";
           planetariumCanvasContext.textAlign = "left";
           planetariumCanvasContext.textBaseline = "middle";
-          planetariumCanvasContext.strokeStyle = "MidnightBlue";
+          planetariumCanvasContext.strokeStyle = toRgb(theme.labelStroke);
           planetariumCanvasContext.lineWidth = 3;
-          planetariumCanvasContext.fillStyle = "white";
+          planetariumCanvasContext.fillStyle = toRgb(theme.starLabel);
           planetariumCanvasContext.strokeText(
             star.name,
             star.xPos * width + 7,
@@ -660,9 +751,9 @@ const sketch = () => {
             planetariumCanvasContext.font = "bold 10px sans-serif";
             planetariumCanvasContext.textAlign = "left";
             planetariumCanvasContext.textBaseline = "middle";
-            planetariumCanvasContext.strokeStyle = "MidnightBlue";
+            planetariumCanvasContext.strokeStyle = toRgb(theme.labelStroke);
             planetariumCanvasContext.lineWidth = 3;
-            planetariumCanvasContext.fillStyle = "white";
+            planetariumCanvasContext.fillStyle = toRgb(theme.starLabel);
             planetariumCanvasContext.strokeText(
               star.name,
               star.xPos * width + 7,
@@ -685,9 +776,9 @@ const sketch = () => {
         planetariumCanvasContext.font = "bold 11px sans-serif";
         planetariumCanvasContext.textAlign = "left";
         planetariumCanvasContext.textBaseline = "middle";
-        planetariumCanvasContext.strokeStyle = "MidnightBlue";
+        planetariumCanvasContext.strokeStyle = toRgb(theme.labelStroke);
         planetariumCanvasContext.lineWidth = 3;
-        planetariumCanvasContext.fillStyle = "white";
+        planetariumCanvasContext.fillStyle = toRgb(theme.starLabel);
         planetariumCanvasContext.strokeText(
           star.name,
           star.xPos * width + 7,
@@ -719,7 +810,6 @@ const sketch = () => {
 canvasSketch(sketch, settings);
 
 /* TODOs  
-- Search for an star (autocomplete)
 - Theming
 - Default starting options
 */
