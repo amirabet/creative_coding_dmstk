@@ -1448,10 +1448,17 @@
           "dec": 54.47,
           "brightness": 0.0108,
           "magnitude": 4.92
+        },
+        {
+          "name": "Nu Draconis",
+          "ra": 17.534,
+          "dec": 55.17,
+          "brightness": 0.0113,
+          "magnitude": 4.87
         }
       ],
       "paths": [
-        ["Grumium", "Eltanin", "Rastaban", "Grumium"],
+        ["Grumium", "Eltanin", "Rastaban", "Nu Draconis", "Grumium"],
         [
           "Grumium",
           "Tyl",

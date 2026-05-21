@@ -145,11 +145,17 @@ let autoplayInterval = null;
 let todayAnimInterval = null;
 let autoplayBinding = null;
 let searchConstellationBinding = null;
+let searchStarBinding = null;
 
 function resetSearch() {
-  if (params.searchConstellation === "-") return;
-  params.searchConstellation = "-";
-  if (searchConstellationBinding) searchConstellationBinding.refresh();
+  if (params.searchConstellation !== SEARCH_NONE) {
+    params.searchConstellation = SEARCH_NONE;
+    if (searchConstellationBinding) searchConstellationBinding.refresh();
+  }
+  if (params.searchStar !== SEARCH_NONE) {
+    params.searchStar = SEARCH_NONE;
+    if (searchStarBinding) searchStarBinding.refresh();
+  }
 }
 const dayOfYearBinding = dateFolder
   .addInput(params, "dayOfYear", {
@@ -184,8 +190,6 @@ dateFolder.addButton({ title: "Go to Today" }).on("click", () => {
   const start = new Date(now.getFullYear(), 0, 0);
   const targetDay = Math.floor((now - start) / 86400000);
 
-  if (targetDay === params.dayOfYear) return;
-
   // Stop autoplay and any previous Today animation before starting a new one
   if (autoplayInterval) {
     clearInterval(autoplayInterval);
@@ -211,12 +215,30 @@ dateFolder.addButton({ title: "Go to Today" }).on("click", () => {
   }, 10);
 });
 
-const searchConstellationOptions = { "-": "-" };
+const SEARCH_NONE = "";
+const searchConstellationOptions = { [SEARCH_NONE]: SEARCH_NONE };
 for (const constellation of constellations) {
   searchConstellationOptions[constellation.name] = constellation.name;
 }
-params.searchConstellation = "-";
+params.searchConstellation = SEARCH_NONE;
 params.searchOffset = 0;
+params.searchStar = SEARCH_NONE;
+
+// Star lookup: name → RA (first occurrence wins if duplicate names exist)
+const searchStarOptions = { [SEARCH_NONE]: SEARCH_NONE };
+const starRaByName = {};
+const allStarNames = [];
+for (const constellation of constellations) {
+  for (const star of constellation.stars) {
+    if (starRaByName[star.name] === undefined) {
+      starRaByName[star.name] = star.ra;
+      allStarNames.push(star.name);
+    }
+  }
+}
+allStarNames.sort().forEach((name) => {
+  searchStarOptions[name] = name;
+});
 
 let searchAnimFrame = null;
 function animateSearchOffset(target) {
@@ -260,8 +282,13 @@ searchConstellationBinding = searchFolder
       params.autoplay = false;
       if (autoplayBinding) autoplayBinding.refresh();
     }
-    if (params.searchConstellation === "-") {
+    if (params.searchConstellation === SEARCH_NONE) {
       return;
+    }
+    // Reset star search when constellation is chosen
+    if (params.searchStar !== SEARCH_NONE) {
+      params.searchStar = SEARCH_NONE;
+      if (searchStarBinding) searchStarBinding.refresh();
     }
     const found = constellations.find(
       (c) => c.name === params.searchConstellation,
@@ -274,6 +301,36 @@ searchConstellationBinding = searchFolder
     // Solve for searchOffset so the centroid lands at angle = 3π/2 (bottom-center)
     const targetOffset =
       (3 * Math.PI) / 2 - (1 - avgRa / 24) * 2 * Math.PI - baseRotation;
+    animateSearchOffset(targetOffset);
+  });
+
+searchStarBinding = searchFolder
+  .addInput(params, "searchStar", {
+    label: "Star",
+    view: "search-list",
+    options: searchStarOptions,
+    noDataText: "not found",
+    debounceDelay: 0,
+  })
+  .on("change", () => {
+    if (autoplayInterval) {
+      clearInterval(autoplayInterval);
+      autoplayInterval = null;
+      params.autoplay = false;
+      if (autoplayBinding) autoplayBinding.refresh();
+    }
+    // Reset constellation search when star is chosen
+    if (params.searchConstellation !== SEARCH_NONE) {
+      params.searchConstellation = SEARCH_NONE;
+      if (searchConstellationBinding) searchConstellationBinding.refresh();
+    }
+    if (params.searchStar === SEARCH_NONE) return;
+    const starRa = starRaByName[params.searchStar];
+    if (starRa === undefined) return;
+    const baseRotation =
+      DAY_OFFSET_BASE + (params.dayOfYear / 365.25) * 2 * Math.PI;
+    const targetOffset =
+      (3 * Math.PI) / 2 - (1 - starRa / 24) * 2 * Math.PI - baseRotation;
     animateSearchOffset(targetOffset);
   });
 
@@ -556,6 +613,29 @@ const sketch = () => {
             planetariumCanvasContext.restore();
           }
         }
+      }
+
+      // Show name of the searched star
+      if (params.searchStar !== SEARCH_NONE && starsByName[params.searchStar]) {
+        const star = starsByName[params.searchStar];
+        planetariumCanvasContext.save();
+        planetariumCanvasContext.font = "bold 11px sans-serif";
+        planetariumCanvasContext.textAlign = "left";
+        planetariumCanvasContext.textBaseline = "middle";
+        planetariumCanvasContext.strokeStyle = "MidnightBlue";
+        planetariumCanvasContext.lineWidth = 3;
+        planetariumCanvasContext.fillStyle = "white";
+        planetariumCanvasContext.strokeText(
+          star.name,
+          star.xPos * width + 7,
+          star.yPos * height,
+        );
+        planetariumCanvasContext.fillText(
+          star.name,
+          star.xPos * width + 7,
+          star.yPos * height,
+        );
+        planetariumCanvasContext.restore();
       }
     }
     // Paint the planetary canvas in the main canvas
