@@ -163,6 +163,7 @@ Object.keys(starRaByName)
 const _todayDay = getTodayDayOfYear();
 const params = {
   // Display toggles
+  showGrid: true,
   showConstellationName: true,
   showConstellationLines: true,
   showStarNames: "none",
@@ -180,6 +181,7 @@ const pane = new tweakPane.Pane({ title: "Planetarium" });
 pane.registerPlugin(TweakpaneSearchListPlugin);
 
 // Top-level display controls
+pane.addInput(params, "showGrid", { label: "Show grid" });
 pane.addInput(params, "showConstellationName", {
   label: "Show constellation name",
 });
@@ -463,39 +465,42 @@ const sketch = () => {
     planetariumCanvasContext.fillStyle = "MidnightBlue";
     planetariumCanvasContext.fillRect(0, 0, width, height);
 
+    // Planetarium grid
     // Create circles and lines for sky map
-    const centerX = width / 2;
-    const centerY = height / 2;
-    const firstCircleRadius = width / 12.2;
-    const lastCircleRadius = (width / 12.2) * 6;
+    if (params.showGrid) {
+      const centerX = width / 2;
+      const centerY = height / 2;
+      const firstCircleRadius = width / 12.2;
+      const lastCircleRadius = (width / 12.2) * 6;
 
-    for (let i = 0; i < 6; i++) {
-      planetariumCanvasContext.beginPath();
-      planetariumCanvasContext.arc(
-        centerX,
-        centerY,
-        (width / 12.2) * (i + 1),
-        0,
-        Math.PI * 2,
-      );
-      planetariumCanvasContext.strokeStyle = "RoyalBlue";
-      planetariumCanvasContext.lineWidth = 1;
-      planetariumCanvasContext.stroke();
-    }
+      for (let i = 0; i < 6; i++) {
+        planetariumCanvasContext.beginPath();
+        planetariumCanvasContext.arc(
+          centerX,
+          centerY,
+          (width / 12.2) * (i + 1),
+          0,
+          Math.PI * 2,
+        );
+        planetariumCanvasContext.strokeStyle = "RoyalBlue";
+        planetariumCanvasContext.lineWidth = 1;
+        planetariumCanvasContext.stroke();
+      }
 
-    for (let i = 0; i < 24; i++) {
-      const angle = (Math.PI * 2 * i) / 24;
-      const startX = centerX + Math.cos(angle) * firstCircleRadius;
-      const startY = centerY + Math.sin(angle) * firstCircleRadius;
-      const endX = centerX + Math.cos(angle) * lastCircleRadius;
-      const endY = centerY + Math.sin(angle) * lastCircleRadius;
+      for (let i = 0; i < 24; i++) {
+        const angle = (Math.PI * 2 * i) / 24;
+        const startX = centerX + Math.cos(angle) * firstCircleRadius;
+        const startY = centerY + Math.sin(angle) * firstCircleRadius;
+        const endX = centerX + Math.cos(angle) * lastCircleRadius;
+        const endY = centerY + Math.sin(angle) * lastCircleRadius;
 
-      planetariumCanvasContext.beginPath();
-      planetariumCanvasContext.moveTo(startX, startY);
-      planetariumCanvasContext.lineTo(endX, endY);
-      planetariumCanvasContext.strokeStyle = "RoyalBlue";
-      planetariumCanvasContext.lineWidth = 1;
-      planetariumCanvasContext.stroke();
+        planetariumCanvasContext.beginPath();
+        planetariumCanvasContext.moveTo(startX, startY);
+        planetariumCanvasContext.lineTo(endX, endY);
+        planetariumCanvasContext.strokeStyle = "RoyalBlue";
+        planetariumCanvasContext.lineWidth = 1;
+        planetariumCanvasContext.stroke();
+      }
     }
 
     // Rotation offset derived from the selected day of year.
