@@ -1,5 +1,6 @@
 const canvasSketch = require("canvas-sketch");
 const tweakPane = require("tweakpane");
+const TweakpaneSearchListPlugin = require("tweakpane-plugin-search-list");
 
 const constellationsData = require("./constellations_v3.json");
 
@@ -128,6 +129,7 @@ for (const constellation of constellations) {
 }
 
 const pane = new tweakPane.Pane({ title: "Planetarium" });
+pane.registerPlugin(TweakpaneSearchListPlugin);
 pane.addInput(params, "showConstellationName", {
   label: "Show constellation name",
 });
@@ -176,6 +178,7 @@ autoplayBinding = dateFolder
       autoplayInterval = null;
     }
   });
+dateFolder.addSeparator();
 dateFolder.addButton({ title: "Go to Today" }).on("click", () => {
   const now = new Date();
   const start = new Date(now.getFullYear(), 0, 0);
@@ -244,7 +247,10 @@ const searchFolder = pane.addFolder({ title: "Search" });
 searchConstellationBinding = searchFolder
   .addInput(params, "searchConstellation", {
     label: "Constellation",
+    view: "search-list",
     options: searchConstellationOptions,
+    noDataText: "not found",
+    debounceDelay: 0,
   })
   .on("change", () => {
     // Stop autoplay when searching
