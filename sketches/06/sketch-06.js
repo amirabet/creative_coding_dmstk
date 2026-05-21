@@ -142,6 +142,13 @@ const dateFolder = pane.addFolder({ title: "Date" });
 let autoplayInterval = null;
 let todayAnimInterval = null;
 let autoplayBinding = null;
+let searchConstellationBinding = null;
+
+function resetSearch() {
+  if (params.searchConstellation === "-") return;
+  params.searchConstellation = "-";
+  if (searchConstellationBinding) searchConstellationBinding.refresh();
+}
 const dayOfYearBinding = dateFolder
   .addInput(params, "dayOfYear", {
     label: "Day of year",
@@ -151,9 +158,25 @@ const dayOfYearBinding = dateFolder
   })
   .on("change", () => {
     params.date = dayOfYearToDate(params.dayOfYear);
+    resetSearch();
   });
 dateFolder.addMonitor(params, "date", { label: "Date", interval: 50 });
-dateFolder.addButton({ title: "Today" }).on("click", () => {
+autoplayBinding = dateFolder
+  .addInput(params, "autoplay", { label: "Autoplay" })
+  .on("change", () => {
+    if (params.autoplay) {
+      autoplayInterval = setInterval(() => {
+        params.dayOfYear = params.dayOfYear >= 365 ? 1 : params.dayOfYear + 1;
+        params.date = dayOfYearToDate(params.dayOfYear);
+        dayOfYearBinding.refresh();
+        resetSearch();
+      }, 50);
+    } else {
+      clearInterval(autoplayInterval);
+      autoplayInterval = null;
+    }
+  });
+dateFolder.addButton({ title: "Go to Today" }).on("click", () => {
   const now = new Date();
   const start = new Date(now.getFullYear(), 0, 0);
   const targetDay = Math.floor((now - start) / 86400000);
@@ -168,6 +191,7 @@ dateFolder.addButton({ title: "Today" }).on("click", () => {
     if (autoplayBinding) autoplayBinding.refresh();
   }
   clearInterval(todayAnimInterval);
+  resetSearch();
 
   const dir = targetDay > params.dayOfYear ? 1 : -1;
   todayAnimInterval = setInterval(() => {
@@ -176,25 +200,75 @@ dateFolder.addButton({ title: "Today" }).on("click", () => {
     params.dayOfYear += step;
     params.date = dayOfYearToDate(params.dayOfYear);
     dayOfYearBinding.refresh();
+    resetSearch();
     if (params.dayOfYear === targetDay) {
       clearInterval(todayAnimInterval);
       todayAnimInterval = null;
     }
   }, 10);
 });
-autoplayBinding = dateFolder
-  .addInput(params, "autoplay", { label: "Autoplay" })
-  .on("change", () => {
-    if (params.autoplay) {
-      autoplayInterval = setInterval(() => {
-        params.dayOfYear = params.dayOfYear >= 365 ? 1 : params.dayOfYear + 1;
-        params.date = dayOfYearToDate(params.dayOfYear);
-        dayOfYearBinding.refresh();
-      }, 50);
+
+const searchConstellationOptions = { "-": "-" };
+for (const constellation of constellations) {
+  searchConstellationOptions[constellation.name] = constellation.name;
+}
+params.searchConstellation = "-";
+params.searchOffset = 0;
+
+let searchAnimFrame = null;
+function animateSearchOffset(target) {
+  if (searchAnimFrame) cancelAnimationFrame(searchAnimFrame);
+  // Normalize diff to shortest arc [-π, π]
+  let diff = target - params.searchOffset;
+  while (diff > Math.PI) diff -= 2 * Math.PI;
+  while (diff < -Math.PI) diff += 2 * Math.PI;
+  const destination = params.searchOffset + diff;
+  const startVal = params.searchOffset;
+  const duration = 900;
+  const startTime = performance.now();
+  function step(now) {
+    const t = Math.min((now - startTime) / duration, 1);
+    const ease = 1 - Math.pow(1 - t, 3); // cubic ease-out
+    params.searchOffset = startVal + diff * ease;
+    if (t < 1) {
+      searchAnimFrame = requestAnimationFrame(step);
     } else {
+      params.searchOffset = destination;
+      searchAnimFrame = null;
+    }
+  }
+  searchAnimFrame = requestAnimationFrame(step);
+}
+
+const searchFolder = pane.addFolder({ title: "Search" });
+searchConstellationBinding = searchFolder
+  .addInput(params, "searchConstellation", {
+    label: "Constellation",
+    options: searchConstellationOptions,
+  })
+  .on("change", () => {
+    // Stop autoplay when searching
+    if (autoplayInterval) {
       clearInterval(autoplayInterval);
       autoplayInterval = null;
+      params.autoplay = false;
+      if (autoplayBinding) autoplayBinding.refresh();
     }
+    if (params.searchConstellation === "-") {
+      return;
+    }
+    const found = constellations.find(
+      (c) => c.name === params.searchConstellation,
+    );
+    if (!found) return;
+    const avgRa =
+      found.stars.reduce((sum, s) => sum + s.ra, 0) / found.stars.length;
+    const baseRotation =
+      DAY_OFFSET_BASE + (params.dayOfYear / 365.25) * 2 * Math.PI;
+    // Solve for searchOffset so the centroid lands at angle = 3π/2 (bottom-center)
+    const targetOffset =
+      (3 * Math.PI) / 2 - (1 - avgRa / 24) * 2 * Math.PI - baseRotation;
+    animateSearchOffset(targetOffset);
   });
 
 // Mouse position in main canvas logical coordinates (initialised off-screen)
@@ -304,7 +378,9 @@ const sketch = () => {
     // Rotation offset derived from the selected day of year.
     // The sky at midnight makes one full rotation per year: +2π / 365.25 per day.
     const rotationOffset =
-      DAY_OFFSET_BASE + (params.dayOfYear / 365.25) * 2 * Math.PI;
+      DAY_OFFSET_BASE +
+      (params.dayOfYear / 365.25) * 2 * Math.PI +
+      params.searchOffset;
 
     // loop all constellations
     for (const constellation of constellations) {
@@ -330,7 +406,10 @@ const sketch = () => {
       );
 
       // Paint Lines
-      if (params.showConstellationLines) {
+      if (
+        params.showConstellationLines ||
+        constellation.name === params.searchConstellation
+      ) {
         for (const path of constellation.paths) {
           for (let i = 0; i < path.length - 1; i++) {
             const startStar = starsByName[path[i]];
@@ -379,7 +458,10 @@ const sketch = () => {
       }
 
       // Paint constellations' name
-      if (params.showConstellationName) {
+      if (
+        params.showConstellationName ||
+        constellation.name === params.searchConstellation
+      ) {
         const centerX = ((bounds.minX + bounds.maxX) * width) / 2;
         const centerY = ((bounds.minY + bounds.maxY) * height) / 2;
         const textAngle = Math.atan2(centerY - height / 2, centerX - width / 2);
@@ -487,6 +569,6 @@ const sketch = () => {
 canvasSketch(sketch, settings);
 
 /* TODOs  
-- Think how can Aquarius and Capricorn be visible => not possible...
+- Search for an start (autocomplete)
 
 */
