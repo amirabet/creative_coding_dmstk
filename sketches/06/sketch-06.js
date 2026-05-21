@@ -109,27 +109,77 @@ const dayOfYearToDate = (day) =>
 // BASE is back-calculated so that calibration stays when dayOfYear = 83.
 const DAY_OFFSET_BASE = Math.PI / 2 - (83 / 365.25) * 2 * Math.PI;
 
-// Tweakpane controls
-const _today = new Date();
-const _todayDay = Math.floor(
-  (_today - new Date(_today.getFullYear(), 0, 0)) / 86400000,
-);
-const params = {
-  showConstellationName: true,
-  showConstellationLines: true,
-  showStarNames: "none",
-  dayOfYear: _todayDay,
-  date: dayOfYearToDate(_todayDay),
-  autoplay: false,
+// ─── Shared constants ──────────────────────────────────────────────────────
+const MS_PER_DAY = 86400000;
+const SEARCH_NONE = ""; // empty option key used by search-list fields
+
+// ─── Helpers ───────────────────────────────────────────────────────────────
+
+// Returns the current day of year (1-based). Extracted to avoid duplication
+// between the initial params value and the "Go to Today" button handler.
+const getTodayDayOfYear = () => {
+  const now = new Date();
+  return Math.floor((now - new Date(now.getFullYear(), 0, 0)) / MS_PER_DAY);
 };
 
+// Wraps a fractional day value to an integer in [1, 365]. Needed because the
+// search animation destination can cross year boundaries (e.g. searching for a
+// winter constellation from early January yields a raw day around −8 → 357).
+const wrapDay = (d) => ((Math.round(d) - 1 + 3650) % 365) + 1;
+
+// ─── Tweakpane option objects ──────────────────────────────────────────────
+// Built upfront so they can be referenced both in params and in pane inputs.
+
+// "Show star names" dropdown: none | hover | per-constellation
 const starNameOptions = { None: "none", "User action": "on_hover" };
 for (const constellation of constellations) {
   starNameOptions[constellation.name] = constellation.name;
 }
 
+// Constellation search-list: empty entry + one entry per constellation
+const searchConstellationOptions = { [SEARCH_NONE]: SEARCH_NONE };
+for (const constellation of constellations) {
+  searchConstellationOptions[constellation.name] = constellation.name;
+}
+
+// Star search-list: empty entry + all unique star names sorted A–Z.
+// Also builds starRaByName for the rotation calculation (first occurrence wins).
+const starRaByName = {};
+for (const constellation of constellations) {
+  for (const star of constellation.stars) {
+    if (starRaByName[star.name] === undefined) {
+      starRaByName[star.name] = star.ra;
+    }
+  }
+}
+const searchStarOptions = { [SEARCH_NONE]: SEARCH_NONE };
+Object.keys(starRaByName)
+  .sort()
+  .forEach((name) => {
+    searchStarOptions[name] = name;
+  });
+
+// ─── Params ────────────────────────────────────────────────────────────────
+const _todayDay = getTodayDayOfYear();
+const params = {
+  // Display toggles
+  showConstellationName: true,
+  showConstellationLines: true,
+  showStarNames: "none",
+  // Date / time
+  dayOfYear: _todayDay,
+  date: dayOfYearToDate(_todayDay),
+  autoplay: false,
+  // Search state
+  searchConstellation: SEARCH_NONE,
+  searchStar: SEARCH_NONE,
+};
+
+// ─── Pane ──────────────────────────────────────────────────────────────────
 const pane = new tweakPane.Pane({ title: "Planetarium" });
 pane.registerPlugin(TweakpaneSearchListPlugin);
+
+// Top-level display controls
 pane.addInput(params, "showConstellationName", {
   label: "Show constellation name",
 });
@@ -140,23 +190,111 @@ pane.addInput(params, "showStarNames", {
   label: "Show star names",
   options: starNameOptions,
 });
-const dateFolder = pane.addFolder({ title: "Date" });
+
+// ─── State: intervals and bindings ─────────────────────────────────────────
+// Bindings are stored so we can call .refresh() after external param changes.
 let autoplayInterval = null;
 let todayAnimInterval = null;
 let autoplayBinding = null;
 let searchConstellationBinding = null;
 let searchStarBinding = null;
+// Prevents the .refresh() call inside resetXSearch() from re-triggering
+// the other field's change handler and creating a cascade.
+let suppressSearchChange = false;
 
-function resetSearch() {
-  if (params.searchConstellation !== SEARCH_NONE) {
-    params.searchConstellation = SEARCH_NONE;
-    if (searchConstellationBinding) searchConstellationBinding.refresh();
-  }
-  if (params.searchStar !== SEARCH_NONE) {
-    params.searchStar = SEARCH_NONE;
-    if (searchStarBinding) searchStarBinding.refresh();
+// Stops autoplay if running and syncs the toggle UI.
+function stopAutoplay() {
+  if (!autoplayInterval) return;
+  clearInterval(autoplayInterval);
+  autoplayInterval = null;
+  params.autoplay = false;
+  if (autoplayBinding) autoplayBinding.refresh();
+}
+
+// Clears each search field independently (used for mutual exclusion).
+// The search-list plugin keeps two separate values: `value` (the bound param)
+// and `textValue` (what is displayed in the input). refresh() only updates
+// `value`; we must also clear `textValue` so the input visually resets.
+function clearSearchListDisplay(binding) {
+  const pluginCtrl = binding.controller_.valueController;
+  if (pluginCtrl && pluginCtrl.textValue) {
+    pluginCtrl.textValue.rawValue = SEARCH_NONE;
   }
 }
+function resetConstellationSearch() {
+  if (params.searchConstellation === SEARCH_NONE) return;
+  params.searchConstellation = SEARCH_NONE;
+  suppressSearchChange = true;
+  if (searchConstellationBinding) {
+    searchConstellationBinding.refresh();
+    clearSearchListDisplay(searchConstellationBinding);
+  }
+  suppressSearchChange = false;
+}
+function resetStarSearch() {
+  if (params.searchStar === SEARCH_NONE) return;
+  params.searchStar = SEARCH_NONE;
+  suppressSearchChange = true;
+  if (searchStarBinding) {
+    searchStarBinding.refresh();
+    clearSearchListDisplay(searchStarBinding);
+  }
+  suppressSearchChange = false;
+}
+// Resets both search fields at once (called when the day changes).
+function resetSearch() {
+  resetConstellationSearch();
+  resetStarSearch();
+}
+
+// ─── Search rotation helpers ───────────────────────────────────────────────
+let searchAnimFrame = null;
+
+// Smoothly animates params.dayOfYear toward `target` (cubic ease-out, 900 ms),
+// updating the date display each frame so the slider and date stay in sync
+// with the rotation. Because the rotation lives entirely in dayOfYear,
+// "Go to Today" always works from wherever the view has landed.
+function animateToDayOfYear(target) {
+  if (searchAnimFrame) cancelAnimationFrame(searchAnimFrame);
+  searchFolder.disabled = true; // block new searches until rotation finishes
+  const startDay = params.dayOfYear;
+  // Normalise to the shortest arc within ±182.625 days (half a year = half a revolution).
+  let diff = target - startDay;
+  while (diff > 182.625) diff -= 365.25;
+  while (diff < -182.625) diff += 365.25;
+  const destination = startDay + diff;
+  const duration = 900;
+  const startTime = performance.now();
+  function step(now) {
+    const t = Math.min((now - startTime) / duration, 1);
+    const ease = 1 - Math.pow(1 - t, 3); // cubic ease-out
+    params.dayOfYear = wrapDay(startDay + diff * ease);
+    params.date = dayOfYearToDate(params.dayOfYear);
+    suppressSearchChange = true;
+    dayOfYearBinding.refresh();
+    suppressSearchChange = false;
+    if (t < 1) searchAnimFrame = requestAnimationFrame(step);
+    else {
+      searchAnimFrame = null;
+      searchFolder.disabled = false;
+    }
+  }
+  searchAnimFrame = requestAnimationFrame(step);
+}
+
+// Computes the day-of-year that places the given RA at the bottom-center of
+// the chart (totalRotation = 3π/2) and starts the animation.
+// Derived from: DAY_OFFSET_BASE + (targetDay/365.25)·2π = 3π/2 − (1−ra/24)·2π
+function rotateToRa(ra) {
+  const numerator =
+    (3 * Math.PI) / 2 - (1 - ra / 24) * 2 * Math.PI - DAY_OFFSET_BASE;
+  const targetDay = (numerator * 365.25) / (2 * Math.PI);
+  animateToDayOfYear(targetDay);
+}
+
+// ─── Date folder ───────────────────────────────────────────────────────────
+const dateFolder = pane.addFolder({ title: "Date" });
+
 const dayOfYearBinding = dateFolder
   .addInput(params, "dayOfYear", {
     label: "Day of year",
@@ -166,38 +304,36 @@ const dayOfYearBinding = dateFolder
   })
   .on("change", () => {
     params.date = dayOfYearToDate(params.dayOfYear);
-    resetSearch();
+    if (!suppressSearchChange) resetSearch();
   });
+
 dateFolder.addMonitor(params, "date", { label: "Date", interval: 50 });
+
 autoplayBinding = dateFolder
   .addInput(params, "autoplay", { label: "Autoplay" })
   .on("change", () => {
     if (params.autoplay) {
       autoplayInterval = setInterval(() => {
         params.dayOfYear = params.dayOfYear >= 365 ? 1 : params.dayOfYear + 1;
-        params.date = dayOfYearToDate(params.dayOfYear);
-        dayOfYearBinding.refresh();
-        resetSearch();
+        dayOfYearBinding.refresh(); // change handler updates date and resets search
       }, 50);
     } else {
       clearInterval(autoplayInterval);
       autoplayInterval = null;
     }
   });
-dateFolder.addSeparator();
-dateFolder.addButton({ title: "Go to Today" }).on("click", () => {
-  const now = new Date();
-  const start = new Date(now.getFullYear(), 0, 0);
-  const targetDay = Math.floor((now - start) / 86400000);
 
-  // Stop autoplay and any previous Today animation before starting a new one
-  if (autoplayInterval) {
-    clearInterval(autoplayInterval);
-    autoplayInterval = null;
-    params.autoplay = false;
-    if (autoplayBinding) autoplayBinding.refresh();
-  }
+dateFolder.addSeparator();
+
+dateFolder.addButton({ title: "Go to Today" }).on("click", () => {
+  const targetDay = getTodayDayOfYear();
+  stopAutoplay();
   clearInterval(todayAnimInterval);
+  if (searchAnimFrame) {
+    cancelAnimationFrame(searchAnimFrame);
+    searchAnimFrame = null;
+    searchFolder.disabled = false;
+  }
   resetSearch();
 
   const dir = targetDay > params.dayOfYear ? 1 : -1;
@@ -205,9 +341,7 @@ dateFolder.addButton({ title: "Go to Today" }).on("click", () => {
     const remaining = Math.abs(targetDay - params.dayOfYear);
     const step = dir * Math.min(3, remaining);
     params.dayOfYear += step;
-    params.date = dayOfYearToDate(params.dayOfYear);
-    dayOfYearBinding.refresh();
-    resetSearch();
+    dayOfYearBinding.refresh(); // change handler updates date and resets search (no-op)
     if (params.dayOfYear === targetDay) {
       clearInterval(todayAnimInterval);
       todayAnimInterval = null;
@@ -215,123 +349,49 @@ dateFolder.addButton({ title: "Go to Today" }).on("click", () => {
   }, 10);
 });
 
-const SEARCH_NONE = "";
-const searchConstellationOptions = { [SEARCH_NONE]: SEARCH_NONE };
-for (const constellation of constellations) {
-  searchConstellationOptions[constellation.name] = constellation.name;
-}
-params.searchConstellation = SEARCH_NONE;
-params.searchOffset = 0;
-params.searchStar = SEARCH_NONE;
+// ─── Search folder ─────────────────────────────────────────────────────────
+const searchFolder = pane.addFolder({ title: "Search" });
 
-// Star lookup: name → RA (first occurrence wins if duplicate names exist)
-const searchStarOptions = { [SEARCH_NONE]: SEARCH_NONE };
-const starRaByName = {};
-const allStarNames = [];
-for (const constellation of constellations) {
-  for (const star of constellation.stars) {
-    if (starRaByName[star.name] === undefined) {
-      starRaByName[star.name] = star.ra;
-      allStarNames.push(star.name);
-    }
-  }
-}
-allStarNames.sort().forEach((name) => {
-  searchStarOptions[name] = name;
+// Factory for the shared search-list field config (instant filtering).
+const searchListConfig = (label, options) => ({
+  label,
+  view: "search-list",
+  options,
+  noDataText: "not found",
+  debounceDelay: 0,
 });
 
-let searchAnimFrame = null;
-function animateSearchOffset(target) {
-  if (searchAnimFrame) cancelAnimationFrame(searchAnimFrame);
-  // Normalize diff to shortest arc [-π, π]
-  let diff = target - params.searchOffset;
-  while (diff > Math.PI) diff -= 2 * Math.PI;
-  while (diff < -Math.PI) diff += 2 * Math.PI;
-  const destination = params.searchOffset + diff;
-  const startVal = params.searchOffset;
-  const duration = 900;
-  const startTime = performance.now();
-  function step(now) {
-    const t = Math.min((now - startTime) / duration, 1);
-    const ease = 1 - Math.pow(1 - t, 3); // cubic ease-out
-    params.searchOffset = startVal + diff * ease;
-    if (t < 1) {
-      searchAnimFrame = requestAnimationFrame(step);
-    } else {
-      params.searchOffset = destination;
-      searchAnimFrame = null;
-    }
-  }
-  searchAnimFrame = requestAnimationFrame(step);
-}
-
-const searchFolder = pane.addFolder({ title: "Search" });
 searchConstellationBinding = searchFolder
-  .addInput(params, "searchConstellation", {
-    label: "Constellation",
-    view: "search-list",
-    options: searchConstellationOptions,
-    noDataText: "not found",
-    debounceDelay: 0,
-  })
+  .addInput(
+    params,
+    "searchConstellation",
+    searchListConfig("Constellation", searchConstellationOptions),
+  )
   .on("change", () => {
-    // Stop autoplay when searching
-    if (autoplayInterval) {
-      clearInterval(autoplayInterval);
-      autoplayInterval = null;
-      params.autoplay = false;
-      if (autoplayBinding) autoplayBinding.refresh();
-    }
-    if (params.searchConstellation === SEARCH_NONE) {
-      return;
-    }
-    // Reset star search when constellation is chosen
-    if (params.searchStar !== SEARCH_NONE) {
-      params.searchStar = SEARCH_NONE;
-      if (searchStarBinding) searchStarBinding.refresh();
-    }
+    if (suppressSearchChange) return;
+    stopAutoplay();
+    resetStarSearch(); // always clear star when constellation field is touched
+    if (params.searchConstellation === SEARCH_NONE) return;
+    // Rotate to the centroid RA of the selected constellation
     const found = constellations.find(
       (c) => c.name === params.searchConstellation,
     );
     if (!found) return;
     const avgRa =
       found.stars.reduce((sum, s) => sum + s.ra, 0) / found.stars.length;
-    const baseRotation =
-      DAY_OFFSET_BASE + (params.dayOfYear / 365.25) * 2 * Math.PI;
-    // Solve for searchOffset so the centroid lands at angle = 3π/2 (bottom-center)
-    const targetOffset =
-      (3 * Math.PI) / 2 - (1 - avgRa / 24) * 2 * Math.PI - baseRotation;
-    animateSearchOffset(targetOffset);
+    rotateToRa(avgRa);
   });
 
 searchStarBinding = searchFolder
-  .addInput(params, "searchStar", {
-    label: "Star",
-    view: "search-list",
-    options: searchStarOptions,
-    noDataText: "not found",
-    debounceDelay: 0,
-  })
+  .addInput(params, "searchStar", searchListConfig("Star", searchStarOptions))
   .on("change", () => {
-    if (autoplayInterval) {
-      clearInterval(autoplayInterval);
-      autoplayInterval = null;
-      params.autoplay = false;
-      if (autoplayBinding) autoplayBinding.refresh();
-    }
-    // Reset constellation search when star is chosen
-    if (params.searchConstellation !== SEARCH_NONE) {
-      params.searchConstellation = SEARCH_NONE;
-      if (searchConstellationBinding) searchConstellationBinding.refresh();
-    }
+    if (suppressSearchChange) return;
+    stopAutoplay();
+    resetConstellationSearch(); // always clear constellation when star field is touched
     if (params.searchStar === SEARCH_NONE) return;
     const starRa = starRaByName[params.searchStar];
     if (starRa === undefined) return;
-    const baseRotation =
-      DAY_OFFSET_BASE + (params.dayOfYear / 365.25) * 2 * Math.PI;
-    const targetOffset =
-      (3 * Math.PI) / 2 - (1 - starRa / 24) * 2 * Math.PI - baseRotation;
-    animateSearchOffset(targetOffset);
+    rotateToRa(starRa);
   });
 
 // Mouse position in main canvas logical coordinates (initialised off-screen)
@@ -441,9 +501,7 @@ const sketch = () => {
     // Rotation offset derived from the selected day of year.
     // The sky at midnight makes one full rotation per year: +2π / 365.25 per day.
     const rotationOffset =
-      DAY_OFFSET_BASE +
-      (params.dayOfYear / 365.25) * 2 * Math.PI +
-      params.searchOffset;
+      DAY_OFFSET_BASE + (params.dayOfYear / 365.25) * 2 * Math.PI;
 
     // loop all constellations
     for (const constellation of constellations) {
@@ -638,6 +696,7 @@ const sketch = () => {
         planetariumCanvasContext.restore();
       }
     }
+
     // Paint the planetary canvas in the main canvas
     // Big scale
     context.drawImage(
