@@ -655,6 +655,7 @@ const sketch = () => {
 canvasSketch(sketch, settings);
 
 /* TODOs  
-- Search for an start (autocomplete)
-
+- Search for an star (autocomplete)
+- Theming
+- Default starting options
 */
