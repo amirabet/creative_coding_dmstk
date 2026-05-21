@@ -810,6 +810,10 @@ const sketch = () => {
 canvasSketch(sketch, settings);
 
 /* TODOs  
-- Theming
+- Theming Tweakpane with the theme
+- Allow changing scale between 1:1 and current visible sky
+- Paint horizon ??? (need hours??)
 - Default starting options
+- Exporting to html
+- Embedding into any webpage
 */
