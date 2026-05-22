@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "main": "sketch-06.js",
   "scripts": {
+    "start": "canvas-sketch sketch-06.js --open",
+    "build": "node build.js",
+    "build:all": "node build.js --all",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

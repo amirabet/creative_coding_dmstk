@@ -53,6 +53,15 @@ const CONFIG = {
   // This only affects the initial view — runtime behaviour is unchanged.
   searchConstellation: SEARCH_NONE, // constellation name | SEARCH_NONE ("")
   searchStar: SEARCH_NONE, // star name | SEARCH_NONE ("")
+
+  // ── Embedding ─────────────────────────────────────────────────────────────
+  target: "", // id of an existing DOM element to mount the canvas into;
+  // leave empty to auto-create a #canvas-wrapper div
+
+  // ── Build-time overrides ───────────────────────────────────────────────────
+  // Injected by build.js via window.__SKETCH_CONFIG__ before the main script.
+  // Has no effect in dev mode (window.__SKETCH_CONFIG__ is undefined → spread {}).
+  ...(window.__SKETCH_CONFIG__ || {}),
 };
 
 // ─── Theme ─────────────────────────────────────────────────────────────────
@@ -420,6 +429,14 @@ autoplayBinding = dateFolder
     }
   });
 
+// Kick-start autoplay if it was pre-set via __SKETCH_CONFIG__.
+if (params.autoplay && !autoplayInterval) {
+  autoplayInterval = setInterval(() => {
+    params.dayOfYear = params.dayOfYear >= 365 ? 1 : params.dayOfYear + 1;
+    dayOfYearBinding.refresh();
+  }, 50);
+}
+
 dateFolder.addButton({ title: "Go to Today" }).on("click", () => {
   const targetDay = getTodayDayOfYear();
   stopAutoplay();
@@ -492,6 +509,8 @@ searchStarBinding = searchFolder
 // ─── Pane theming ───────────────────────────────────────────────────────
 // Applies the current sketch theme to Tweakpane by writing --tp-* CSS
 // custom properties directly onto pane.element (pure JS, no CSS file needed).
+// canvasWrapper is set in the sketch factory and updated here on theme change.
+let canvasWrapper = null;
 const applyPaneTheme = () => {
   const el = pane.element;
   const bg = theme.background;
@@ -531,6 +550,8 @@ const applyPaneTheme = () => {
 
   el.style.border = `1px solid ${rgba(label, 0.5)}`;
   el.style.borderRadius = "4px";
+  if (canvasWrapper)
+    canvasWrapper.style.backgroundColor = toRgb(theme.background);
 
   // The search-list plugin renders its dropdown via Popper.js, appending it to
   // document.body — outside pane.element — so the scoped --tp-* vars above
@@ -784,7 +805,46 @@ document.addEventListener("mousedown", (e) => {
 const mousePos = { x: -9999, y: -9999 };
 let canvasListenerAttached = false;
 
-const sketch = () => {
+const sketch = ({ canvas }) => {
+  // ─── Responsive wrapper ──────────────────────────────────────────────────
+  // If CONFIG.target names an existing element, mount the canvas into it.
+  // Otherwise auto-create a #canvas-wrapper div next to the canvas.
+  let wrapper = CONFIG.target ? document.getElementById(CONFIG.target) : null;
+  const wrapperId = "skystarmapcanvas";
+  if (wrapper) {
+    wrapper.appendChild(canvas);
+  } else {
+    wrapper = document.createElement("div");
+    wrapper.id = wrapperId;
+    canvas.parentNode.insertBefore(wrapper, canvas);
+    wrapper.appendChild(canvas);
+  }
+  if (!wrapper.id) wrapper.id = wrapperId;
+  canvasWrapper = wrapper;
+
+  // Inject responsive CSS. Uses !important to override the inline
+  // width/height px values that canvas-sketch sets on the canvas element.
+  const responsiveStyle = document.createElement("style");
+  responsiveStyle.textContent = `
+    #${wrapper.id} {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: ${toRgb(theme.background)};
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #${wrapper.id} canvas {
+      display: block !important;
+      width: auto !important;
+      height: 100% !important;
+      aspect-ratio: 2 / 1;
+      flex-shrink: 0;
+    }
+  `;
+  document.head.appendChild(responsiveStyle);
+
   return ({ context, width, height, time }) => {
     // Use the smaller dimension as the base so the star circle stays circular
     // on non-square canvases (e.g. 2160×1080). xOffset centres it horizontally.
@@ -1086,7 +1146,7 @@ const sketch = () => {
 canvasSketch(sketch, settings);
 
 /* TODOs  
-- Default starting options
-- Exporting to html
-- Embedding into any webpage via JS
+- Add a "fork me on github" label to all demos
+- Embedding into any webpage via JS (plugin)
+
 */
