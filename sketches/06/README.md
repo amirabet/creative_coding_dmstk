@@ -108,10 +108,12 @@ dayOfYear: 355,            // late December sky
 
 ## Data
 
-Star and constellation data is loaded from `constellations_v3.json`. Each constellation entry contains:
+Star and constellation data is loaded from `constellations.json`. Each constellation entry contains:
 
 - `name` — display name (used as the value for `searchConstellation` and `showStarNames`)
 - `stars[]` — array of `{ name, ra, dec, magnitude }` objects
 - `paths[]` — arrays of star name sequences that define the line art
 
 `ra` is right ascension in hours (0 – 24). `dec` is declination in degrees (−90 – +90). `magnitude` is apparent magnitude; lower = brighter.
+
+For a full reference of all 43 constellation names and 269 star names available as CONFIG values, see [docs/star-data.md](docs/star-data.md).

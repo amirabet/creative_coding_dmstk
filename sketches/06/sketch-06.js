@@ -9,6 +9,52 @@ const settings = {
   animate: true,
 };
 
+// ─── Shared constants ──────────────────────────────────────────────────────
+const MS_PER_DAY = 86400000;
+const SEARCH_NONE = ""; // empty option key used by search-list fields
+
+// ─── Default configuration ────────────────────────────────────────────────
+// All knobs exposed in the Tweakpane UI, collected in one place so a future
+// caller can supply a partial overrides object to pre-configure the sketch.
+const getTodayDayOfYear = () => {
+  const now = new Date();
+  return Math.floor((now - new Date(now.getFullYear(), 0, 0)) / MS_PER_DAY);
+};
+// Convert a 1-based day-of-year to a short readable date string (e.g. "Mar 24").
+// Uses a fixed non-leap year so day 1 = Jan 1 and day 365 = Dec 31.
+const dayOfYearToDate = (day) =>
+  new Date(2001, 0, day).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+const CONFIG = {
+  // ── Sky display ──────────────────────────────────────────────────────────
+  viewScale: "sky", // "sky" | "1:1"
+  showGrid: true,
+  showConstellationName: true,
+  showConstellationLines: true,
+  showStarNames: "none", // "none" | "on_hover" | <constellationName>
+
+  // ── Date / time ──────────────────────────────────────────────────────────
+  dayOfYear: getTodayDayOfYear(), // 1–365 (defaults to today)
+  date: dayOfYearToDate(getTodayDayOfYear()), // display string, kept in sync with dayOfYear
+  autoplay: false, // animate day-of-year forward automatically
+
+  // ── Theme ─────────────────────────────────────────────────────────────────
+  theme: "blue", // preset key | "custom"
+
+  // ── Panel ─────────────────────────────────────────────────────────────────
+  panelCorner: "bottom-right", // "top-left" | "top-right" | "bottom-left" | "bottom-right"
+  showPane: true, // whether the Tweakpane panel is visible
+
+  // ── Search (initial selection) ─────────────────────────────────────────────
+  // Priority at startup: searchStar (1) > searchConstellation (2) > dayOfYear (3).
+  // The top-priority non-empty value wins; lower-priority fields are ignored.
+  // This only affects the initial view — runtime behaviour is unchanged.
+  searchConstellation: SEARCH_NONE, // constellation name | SEARCH_NONE ("")
+  searchStar: SEARCH_NONE, // star name | SEARCH_NONE ("")
+};
+
 // ─── Theme ─────────────────────────────────────────────────────────────────
 // Converts a theme {r, g, b} colour to a CSS rgb() string for canvas use.
 const toRgb = ({ r, g, b }) => `rgb(${r}, ${g}, ${b})`;
@@ -70,9 +116,6 @@ const themes = {
     starLabel: { r: 235, g: 225, b: 190 }, // soft warm white
   },
 };
-
-// Current applied theme
-const theme = { ...themes.blue };
 
 const getStarFillColor = (brightness) => {
   // brightness = 10^(-0.4*m); brightest stars ~1.0, dimmest ~0.01
@@ -172,30 +215,11 @@ const planetariumCanvasContext = planetariumCanvas.getContext("2d");
 const constellations = constellationsData.constellations.flatMap((entry) =>
   Array.isArray(entry.constellations) ? entry.constellations : [entry],
 );
-// Convert a 1-based day-of-year to a short readable date string (e.g. "Mar 24").
-// Uses a fixed non-leap year so day 1 = Jan 1 and day 365 = Dec 31.
-const dayOfYearToDate = (day) =>
-  new Date(2001, 0, day).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-
 // Day 83 (March 24) → rotationOffset = π/2 (the original hardcoded value).
 // BASE is back-calculated so that calibration stays when dayOfYear = 83.
 const DAY_OFFSET_BASE = Math.PI / 2 - (83 / 365.25) * 2 * Math.PI;
 
-// ─── Shared constants ──────────────────────────────────────────────────────
-const MS_PER_DAY = 86400000;
-const SEARCH_NONE = ""; // empty option key used by search-list fields
-
 // ─── Helpers ───────────────────────────────────────────────────────────────
-
-// Returns the current day of year (1-based). Extracted to avoid duplication
-// between the initial params value and the "Go to Today" button handler.
-const getTodayDayOfYear = () => {
-  const now = new Date();
-  return Math.floor((now - new Date(now.getFullYear(), 0, 0)) / MS_PER_DAY);
-};
 
 // Wraps a fractional day value to an integer in [1, 365]. Needed because the
 // search animation destination can cross year boundaries (e.g. searching for a
@@ -234,44 +258,12 @@ Object.keys(starRaByName)
     searchStarOptions[name] = name;
   });
 
-// ─── Default configuration ────────────────────────────────────────────────
-// All knobs exposed in the Tweakpane UI, collected in one place so a future
-// caller can supply a partial overrides object to pre-configure the sketch.
-const _todayDay = getTodayDayOfYear();
-const CONFIG = {
-  // ── Sky display ──────────────────────────────────────────────────────────
-  viewScale: "sky", // "sky" | "1:1"
-  showGrid: true,
-  showConstellationName: true,
-  showConstellationLines: true,
-  showStarNames: "none", // "none" | "all" | "on_hover" | <constellationName>
-
-  // ── Date / time ──────────────────────────────────────────────────────────
-  dayOfYear: _todayDay, // 1–365 (defaults to today)
-  autoplay: false, // animate day-of-year forward automatically
-
-  // ── Theme ─────────────────────────────────────────────────────────────────
-  theme: "blue", // preset key | "custom"
-
-  // ── Panel ─────────────────────────────────────────────────────────────────
-  panelCorner: "bottom-right", // "top-left" | "top-right" | "bottom-left" | "bottom-right"
-  showPane: true, // whether the Tweakpane panel is visible
-
-  // ── Search (initial selection) ─────────────────────────────────────────────
-  // Priority at startup: searchStar (1) > searchConstellation (2) > dayOfYear (3).
-  // The top-priority non-empty value wins; lower-priority fields are ignored.
-  // This only affects the initial view — runtime behaviour is unchanged.
-  searchConstellation: SEARCH_NONE, // constellation name | SEARCH_NONE ("")
-  searchStar: SEARCH_NONE, // star name | SEARCH_NONE ("")
-};
+// Initialize the live theme from CONFIG.theme (falls back to blue if the key is unknown).
+const theme = { ...(themes[CONFIG.theme] ?? themes.blue) };
 
 // ─── Params ────────────────────────────────────────────────────────────────
-// Runtime working copy — all configurable values from CONFIG, plus the date
-// string that is derived from dayOfYear and kept in sync for the monitor.
-const params = {
-  ...CONFIG,
-  date: dayOfYearToDate(CONFIG.dayOfYear),
-};
+// Runtime working copy of CONFIG; date is updated whenever dayOfYear changes.
+const params = { ...CONFIG };
 
 // ─── Pane ──────────────────────────────────────────────────────────────────
 const pane = new tweakPane.Pane({ title: "Planetarium Controls" });
