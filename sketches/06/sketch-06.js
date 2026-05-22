@@ -455,6 +455,84 @@ searchStarBinding = searchFolder
     rotateToRa(starRa);
   });
 
+// ─── Pane theming ───────────────────────────────────────────────────────
+// Applies the current sketch theme to Tweakpane by writing --tp-* CSS
+// custom properties directly onto pane.element (pure JS, no CSS file needed).
+const applyPaneTheme = () => {
+  const el = pane.element;
+  const bg = theme.background;
+  const label = theme.constellationLabel;
+  const bright = theme.starBrightColor;
+  const grid = theme.grid;
+  const rgba = ({ r, g, b }, a = 1) => `rgba(${r},${g},${b},${a})`;
+
+  el.style.setProperty("--tp-base-background-color", rgba(bg, 0.95));
+  el.style.setProperty("--tp-base-shadow-color", rgba(bg, 0.6));
+  el.style.setProperty("--tp-button-background-color", rgba(grid, 1));
+  el.style.setProperty(
+    "--tp-button-background-color-active",
+    rgba(bright, 0.9),
+  );
+  el.style.setProperty("--tp-button-background-color-focus", rgba(grid, 0.9));
+  el.style.setProperty("--tp-button-background-color-hover", rgba(grid, 0.8));
+  el.style.setProperty("--tp-button-foreground-color", rgba(bg, 1));
+  el.style.setProperty("--tp-container-background-color", rgba(bg, 0.5));
+  el.style.setProperty("--tp-container-background-color-active", rgba(bg, 0.8));
+  el.style.setProperty("--tp-container-background-color-focus", rgba(bg, 0.7));
+  el.style.setProperty("--tp-container-background-color-hover", rgba(bg, 0.6));
+  el.style.setProperty("--tp-container-foreground-color", rgba(label, 0.8));
+  el.style.setProperty("--tp-groove-foreground-color", rgba(grid, 0.4));
+  el.style.setProperty("--tp-input-background-color", rgba(bg, 0.4));
+  el.style.setProperty("--tp-input-background-color-active", rgba(bg, 0.7));
+  el.style.setProperty("--tp-input-background-color-focus", rgba(bg, 0.6));
+  el.style.setProperty("--tp-input-background-color-hover", rgba(bg, 0.5));
+  el.style.setProperty("--tp-input-foreground-color", rgba(bright, 0.9));
+  el.style.setProperty("--tp-label-foreground-color", rgba(label, 0.9));
+  el.style.setProperty("--tp-monitor-background-color", rgba(bg, 0.3));
+  el.style.setProperty("--tp-monitor-foreground-color", rgba(bright, 0.5));
+
+  // The search-list plugin renders its dropdown via Popper.js, appending it to
+  // document.body — outside pane.element — so the scoped --tp-* vars above
+  // can't reach it. We inject/update a <style> tag instead (still pure JS).
+  let searchListStyle = document.getElementById("tp-search-list-theme");
+  if (!searchListStyle) {
+    searchListStyle = document.createElement("style");
+    searchListStyle.id = "tp-search-list-theme";
+    document.head.appendChild(searchListStyle);
+  }
+  searchListStyle.textContent = `
+    .tp-search-listv_options {
+      background-color: ${rgba(bg, 0.97)} !important;
+      scrollbar-color: ${rgba(grid, 0.8)} ${rgba(bg, 0.4)};
+      scrollbar-width: thin;
+    }
+    .tp-search-listv_options li {
+      color: ${rgba(bright, 1)};
+    }
+    .tp-search-listv_options li:hover {
+      background-color: ${rgba(grid, 0.85)} !important;
+      color: ${rgba(bright, 1)};
+    }
+    .tp-search-listv_options .no-data {
+      color: ${rgba(label, 0.7)} !important;
+    }
+    .tp-search-listv_options::-webkit-scrollbar {
+      width: 5px;
+    }
+    .tp-search-listv_options::-webkit-scrollbar-track {
+      background: ${rgba(bg, 0.4)};
+      border-radius: 3px;
+    }
+    .tp-search-listv_options::-webkit-scrollbar-thumb {
+      background-color: ${rgba(grid, 0.8)};
+      border-radius: 3px;
+    }
+    .tp-search-listv_options::-webkit-scrollbar-thumb:hover {
+      background-color: ${rgba(grid, 1)};
+    }
+  `;
+};
+
 // ─── Theme folder ────────────────────────────────────────────────────────
 const themeFolder = pane.addFolder({ title: "Theme" });
 const themePresetBinding = themeFolder.addInput(params, "theme", {
@@ -494,7 +572,11 @@ themePresetBinding.on("change", () => {
       b.refresh();
     });
   }
+  applyPaneTheme();
 });
+
+// Apply the initial theme to the pane on load
+applyPaneTheme();
 
 // Mouse position in main canvas logical coordinates (initialised off-screen)
 const mousePos = { x: -9999, y: -9999 };
