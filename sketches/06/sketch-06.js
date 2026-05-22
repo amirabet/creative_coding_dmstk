@@ -234,32 +234,49 @@ Object.keys(starRaByName)
     searchStarOptions[name] = name;
   });
 
-// ─── Params ────────────────────────────────────────────────────────────────
+// ─── Default configuration ────────────────────────────────────────────────
+// All knobs exposed in the Tweakpane UI, collected in one place so a future
+// caller can supply a partial overrides object to pre-configure the sketch.
 const _todayDay = getTodayDayOfYear();
-const params = {
-  // Display toggles
+const CONFIG = {
+  // ── Sky display ──────────────────────────────────────────────────────────
+  viewScale: "sky", // "sky" | "1:1"
   showGrid: true,
   showConstellationName: true,
   showConstellationLines: true,
-  showStarNames: "none",
-  // Date / time
-  dayOfYear: _todayDay,
-  date: dayOfYearToDate(_todayDay),
-  autoplay: false,
-  // Search state
-  searchConstellation: SEARCH_NONE,
-  searchStar: SEARCH_NONE,
-  // Theme
-  theme: "blue",
-  // Panel position
-  panelCorner: "bottom-right",
-  // View
-  viewScale: "sky",
+  showStarNames: "none", // "none" | "all" | "on_hover" | <constellationName>
+
+  // ── Date / time ──────────────────────────────────────────────────────────
+  dayOfYear: _todayDay, // 1–365 (defaults to today)
+  autoplay: false, // animate day-of-year forward automatically
+
+  // ── Theme ─────────────────────────────────────────────────────────────────
+  theme: "blue", // preset key | "custom"
+
+  // ── Panel ─────────────────────────────────────────────────────────────────
+  panelCorner: "bottom-right", // "top-left" | "top-right" | "bottom-left" | "bottom-right"
+  showPane: true, // whether the Tweakpane panel is visible
+
+  // ── Search (initial selection) ─────────────────────────────────────────────
+  // Priority at startup: searchStar (1) > searchConstellation (2) > dayOfYear (3).
+  // The top-priority non-empty value wins; lower-priority fields are ignored.
+  // This only affects the initial view — runtime behaviour is unchanged.
+  searchConstellation: SEARCH_NONE, // constellation name | SEARCH_NONE ("")
+  searchStar: SEARCH_NONE, // star name | SEARCH_NONE ("")
+};
+
+// ─── Params ────────────────────────────────────────────────────────────────
+// Runtime working copy — all configurable values from CONFIG, plus the date
+// string that is derived from dayOfYear and kept in sync for the monitor.
+const params = {
+  ...CONFIG,
+  date: dayOfYearToDate(CONFIG.dayOfYear),
 };
 
 // ─── Pane ──────────────────────────────────────────────────────────────────
 const pane = new tweakPane.Pane({ title: "Planetarium Controls" });
 pane.registerPlugin(TweakpaneSearchListPlugin);
+pane.hidden = !CONFIG.showPane;
 
 // ─── Sky Data folder ────────────────────────────────────────────────────────
 const skyDataFolder = pane.addFolder({ title: "Sky Data", expanded: false });
@@ -726,6 +743,38 @@ themeFolder
 applyPaneTheme();
 applyPanePosition();
 
+// ─── Apply CONFIG initial search priority ──────────────────────────────────
+// Enforces: searchStar (1) > searchConstellation (2) > dayOfYear (3).
+// Runs once after all bindings are ready. Runtime resets are unaffected.
+const applyConfigSearch = () => {
+  if (CONFIG.searchStar !== SEARCH_NONE) {
+    // Star wins — clear constellation, set star, rotate.
+    params.searchConstellation = SEARCH_NONE;
+    params.searchStar = CONFIG.searchStar;
+    suppressSearchChange = true;
+    searchConstellationBinding.refresh();
+    clearSearchListDisplay(searchConstellationBinding);
+    suppressSearchChange = false;
+    searchStarBinding.refresh();
+    const ra = starRaByName[CONFIG.searchStar];
+    if (ra !== undefined) rotateToRa(ra);
+  } else if (CONFIG.searchConstellation !== SEARCH_NONE) {
+    // Constellation wins — set field, rotate to centroid RA.
+    params.searchConstellation = CONFIG.searchConstellation;
+    searchConstellationBinding.refresh();
+    const found = constellations.find(
+      (c) => c.name === CONFIG.searchConstellation,
+    );
+    if (found) {
+      const avgRa =
+        found.stars.reduce((sum, s) => sum + s.ra, 0) / found.stars.length;
+      rotateToRa(avgRa);
+    }
+  }
+  // else: dayOfYear from CONFIG already applied via params spread — nothing to do.
+};
+applyConfigSearch();
+
 // ─── Fix: search-list plugin click-outside bug ──────────────────────────────
 // The plugin's own onDocClick handler has the containment check inverted so
 // clicking outside never closes the dropdown. We patch it here instead.
@@ -1045,7 +1094,6 @@ const sketch = () => {
 canvasSketch(sketch, settings);
 
 /* TODOs  
-- Paint horizon ??? (need hours??)
 - Default starting options
 - Exporting to html
 - Embedding into any webpage via JS
