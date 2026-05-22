@@ -148,7 +148,25 @@ const drawTextOnArc = (
   }
 };
 
-// Create a new secondary canvas to render the character / type
+// Draws a star label (outlined text) at the given secondary-canvas position.
+const drawStarLabel = (
+  ctx,
+  name,
+  x,
+  y,
+  { font = "9px sans-serif", lineWidth = 3 } = {},
+) => {
+  ctx.save();
+  ctx.font = font;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "middle";
+  ctx.strokeStyle = toRgb(theme.labelStroke);
+  ctx.lineWidth = lineWidth;
+  ctx.fillStyle = toRgb(theme.starLabel);
+  ctx.strokeText(name, x + 7, y);
+  ctx.fillText(name, x + 7, y);
+  ctx.restore();
+};
 const planetariumCanvas = document.createElement("canvas");
 const planetariumCanvasContext = planetariumCanvas.getContext("2d");
 const constellations = constellationsData.constellations.flatMap((entry) =>
@@ -233,29 +251,32 @@ const params = {
   searchStar: SEARCH_NONE,
   // Theme
   theme: "blue",
+  // Panel position
+  panelCorner: "bottom-right",
   // View
   viewScale: "sky",
 };
 
 // ─── Pane ──────────────────────────────────────────────────────────────────
-const pane = new tweakPane.Pane({ title: "Planetarium" });
+const pane = new tweakPane.Pane({ title: "Planetarium Controls" });
 pane.registerPlugin(TweakpaneSearchListPlugin);
 
-// Top-level display controls
-pane.addInput(params, "showGrid", { label: "Show grid" });
-pane.addInput(params, "showConstellationName", {
-  label: "Show constellation name",
-});
-pane.addInput(params, "showConstellationLines", {
-  label: "Show constellation lines",
-});
-pane.addInput(params, "showStarNames", {
-  label: "Show star names",
-  options: starNameOptions,
-});
-pane.addInput(params, "viewScale", {
+// ─── Sky Data folder ────────────────────────────────────────────────────────
+const skyDataFolder = pane.addFolder({ title: "Sky Data", expanded: false });
+skyDataFolder.addInput(params, "viewScale", {
   label: "View scale",
   options: { "Sky view": "sky", "1:1": "1:1" },
+});
+skyDataFolder.addInput(params, "showGrid", { label: "Show grid" });
+skyDataFolder.addInput(params, "showConstellationName", {
+  label: "Show constellation name",
+});
+skyDataFolder.addInput(params, "showConstellationLines", {
+  label: "Show constellation lines",
+});
+skyDataFolder.addInput(params, "showStarNames", {
+  label: "Show star names",
+  options: starNameOptions,
 });
 
 // ─── State: intervals and bindings ─────────────────────────────────────────
@@ -360,7 +381,7 @@ function rotateToRa(ra) {
 }
 
 // ─── Date folder ───────────────────────────────────────────────────────────
-const dateFolder = pane.addFolder({ title: "Date" });
+const dateFolder = pane.addFolder({ title: "Date", expanded: false });
 
 const dayOfYearBinding = dateFolder
   .addInput(params, "dayOfYear", {
@@ -390,8 +411,6 @@ autoplayBinding = dateFolder
     }
   });
 
-dateFolder.addSeparator();
-
 dateFolder.addButton({ title: "Go to Today" }).on("click", () => {
   const targetDay = getTodayDayOfYear();
   stopAutoplay();
@@ -417,7 +436,7 @@ dateFolder.addButton({ title: "Go to Today" }).on("click", () => {
 });
 
 // ─── Search folder ─────────────────────────────────────────────────────────
-const searchFolder = pane.addFolder({ title: "Search" });
+const searchFolder = pane.addFolder({ title: "Search", expanded: false });
 
 // Factory for the shared search-list field config (instant filtering).
 const searchListConfig = (label, options) => ({
@@ -471,6 +490,10 @@ const applyPaneTheme = () => {
   const bright = theme.starBrightColor;
   const grid = theme.grid;
   const rgba = ({ r, g, b }, a = 1) => `rgba(${r},${g},${b},${a})`;
+  const hex = ({ r, g, b }) =>
+    [r, g, b].map((v) => v.toString(16).padStart(2, "0")).join("");
+  const arrowSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 6"><path fill="#${hex(label)}" d="M0 0l5 6 5-6z"/></svg>`;
+  const arrowUrl = `url("data:image/svg+xml,${encodeURIComponent(arrowSvg)}")`;
 
   el.style.setProperty("--tp-base-background-color", rgba(bg, 0.95));
   el.style.setProperty("--tp-base-shadow-color", rgba(bg, 0.6));
@@ -497,6 +520,9 @@ const applyPaneTheme = () => {
   el.style.setProperty("--tp-monitor-background-color", rgba(bg, 0.3));
   el.style.setProperty("--tp-monitor-foreground-color", rgba(bright, 0.5));
 
+  el.style.border = `1px solid ${rgba(label, 0.5)}`;
+  el.style.borderRadius = "4px";
+
   // The search-list plugin renders its dropdown via Popper.js, appending it to
   // document.body — outside pane.element — so the scoped --tp-* vars above
   // can't reach it. We inject/update a <style> tag instead (still pure JS).
@@ -509,6 +535,8 @@ const applyPaneTheme = () => {
   searchListStyle.textContent = `
     .tp-search-listv_options {
       background-color: ${rgba(bg, 0.97)} !important;
+      border: 1px solid ${rgba(label, 0.4)} !important;
+      border-radius: 4px !important;
       scrollbar-color: ${rgba(grid, 0.8)} ${rgba(bg, 0.4)};
       scrollbar-width: thin;
     }
@@ -536,11 +564,98 @@ const applyPaneTheme = () => {
     .tp-search-listv_options::-webkit-scrollbar-thumb:hover {
       background-color: ${rgba(grid, 1)};
     }
+
+    /* Search-list plugin trigger: accent arrow + pointer cursor */
+    .tp-search-listv,
+    .tp-search-listv_i {
+      cursor: pointer !important;
+    }
+    .tp-search-listv_m {
+      color: ${rgba(bright, 0.9)} !important;
+    }
+    .tp-search-listv_m svg path {
+      fill: ${rgba(bright, 0.9)} !important;
+    }
+
+    /* Checkbox: subtle border on the visible box */
+    .tp-ckbv_w {
+      border: 1px solid ${rgba(label, 0.3)} !important;
+      border-radius: 3px;
+      box-sizing: border-box !important;
+    }
+
+    /* Dropdown: border, pointer cursor, custom accent arrow */
+    .tp-lstv {
+      border: 1px solid ${rgba(label, 0.25)} !important;
+      border-radius: 3px !important;
+      box-sizing: border-box !important;
+      cursor: pointer !important;
+    }
+    .tp-lstv_s {
+      -webkit-appearance: none !important;
+      -moz-appearance: none !important;
+      appearance: none !important;
+      background-image: ${arrowUrl} !important;
+      background-repeat: no-repeat !important;
+      background-position: right 6px center !important;
+      background-size: 10px 6px !important;
+      padding-right: 24px !important;
+      cursor: pointer !important;
+    }
+    /* Hide Tweakpane's own CSS-triangle marker so only our SVG arrow shows */
+    .tp-lstv_m {
+      display: none !important;
+    }
+
+    /* Input fields: subtle border (text input, monitor readouts — not slider) */
+    .tp-txtv_i,
+    .tp-mllv,
+    .tp-sglv,
+    .tp-sglv_v {
+      border: 1px solid ${rgba(label, 0.25)} !important;
+      border-radius: 3px !important;
+      box-sizing: border-box !important;
+    }
+
+    /* Folder titles: always bright + always border-bottom */
+    .tp-fldv_b {
+      color: ${rgba(bright, 1)} !important;
+      font-weight: 600 !important;
+      border-bottom: 1px solid ${rgba(label, 0.3)} !important;
+    }
+    /* Folder accordion marker: replicate Tweakpane's cross gradient with bright accent color */
+    .tp-fldv_m {
+      background: linear-gradient(to left, ${rgba(bright, 1)}, ${rgba(bright, 1)} 2px, transparent 2px, transparent 4px, ${rgba(bright, 1)} 4px) !important;
+      opacity: 1 !important;
+    }
+    /* Opened folder content: border-bottom closes the panel visually */
+    .tp-fldv_c {
+      border-bottom: 1px solid ${rgba(label, 0.3)} !important;
+    }
+
+    /* Root pane: block the button from collapsing the pane */
+    .tp-rotv_b {
+      pointer-events: none !important;
+      cursor: default !important;
+      border-bottom: 1px solid ${rgba(bright, 1)} !important;
+    }
+    /* Hide the rotating accordion marker on the root pane title */
+    .tp-rotv_m {
+      display: none !important;
+    }
+    /* Root pane title text */
+    .tp-rotv_t {
+      color: ${rgba(bright, 1)} !important;
+      font-weight: 700 !important;
+      font-size: 13px !important;
+      letter-spacing: 0.1em !important;
+      text-shadow: 0 0 8px ${rgba(label, 0.6)};
+    }
   `;
 };
 
 // ─── Theme folder ────────────────────────────────────────────────────────
-const themeFolder = pane.addFolder({ title: "Theme" });
+const themeFolder = pane.addFolder({ title: "Theme", expanded: false });
 const themePresetBinding = themeFolder.addInput(params, "theme", {
   label: "Preset",
   options: Object.fromEntries(
@@ -581,8 +696,48 @@ themePresetBinding.on("change", () => {
   applyPaneTheme();
 });
 
-// Apply the initial theme to the pane on load
+themeFolder.addSeparator();
+
+// ─── Pane position ──────────────────────────────────────────────────────────
+const applyPanePosition = () => {
+  const el = pane.element;
+  const margin = "12px";
+  const [v, h] = params.panelCorner.split("-");
+  el.style.position = "fixed";
+  el.style.top = v === "top" ? margin : "auto";
+  el.style.bottom = v === "bottom" ? margin : "auto";
+  el.style.left = h === "left" ? margin : "auto";
+  el.style.right = h === "right" ? margin : "auto";
+};
+
+themeFolder
+  .addInput(params, "panelCorner", {
+    label: "Panel corner",
+    options: {
+      "Top left": "top-left",
+      "Top right": "top-right",
+      "Bottom left": "bottom-left",
+      "Bottom right": "bottom-right",
+    },
+  })
+  .on("change", () => applyPanePosition());
+
+// Apply the initial theme and position to the pane on load
 applyPaneTheme();
+applyPanePosition();
+
+// ─── Fix: search-list plugin click-outside bug ──────────────────────────────
+// The plugin's own onDocClick handler has the containment check inverted so
+// clicking outside never closes the dropdown. We patch it here instead.
+document.addEventListener("mousedown", (e) => {
+  const openBox = document.querySelector(
+    ".tp-search-listv_select-box[data-show]",
+  );
+  if (!openBox) return;
+  const insideTrigger = !!e.target.closest?.(".tp-search-listv");
+  const insidePopup = openBox.contains(e.target);
+  if (!insideTrigger && !insidePopup) openBox.removeAttribute("data-show");
+});
 
 // Mouse position in main canvas logical coordinates (initialised off-screen)
 const mousePos = { x: -9999, y: -9999 };
@@ -758,7 +913,7 @@ const sketch = () => {
 
       // Paint stars
       for (const star of Object.values(starsByName)) {
-        const { ra, dec, xPos, yPos, magnitude, brightness } = star;
+        const { xPos, yPos, magnitude, brightness } = star;
         const blinkAmount = getStarBlinkAmount(time, xPos, yPos, brightness);
         planetariumCanvasContext.save();
         planetariumCanvasContext.globalAlpha = blinkAmount;
@@ -817,24 +972,12 @@ const sketch = () => {
       // Paint star names for the selected constellation
       if (params.showStarNames === constellation.name) {
         for (const star of Object.values(starsByName)) {
-          planetariumCanvasContext.save();
-          planetariumCanvasContext.font = "9px sans-serif";
-          planetariumCanvasContext.textAlign = "left";
-          planetariumCanvasContext.textBaseline = "middle";
-          planetariumCanvasContext.strokeStyle = toRgb(theme.labelStroke);
-          planetariumCanvasContext.lineWidth = 3;
-          planetariumCanvasContext.fillStyle = toRgb(theme.starLabel);
-          planetariumCanvasContext.strokeText(
+          drawStarLabel(
+            planetariumCanvasContext,
             star.name,
-            star.xPos * size + 7,
+            star.xPos * size,
             star.yPos * size,
           );
-          planetariumCanvasContext.fillText(
-            star.name,
-            star.xPos * size + 7,
-            star.yPos * size,
-          );
-          planetariumCanvasContext.restore();
         }
       }
 
@@ -858,24 +1001,13 @@ const sketch = () => {
             logMouseY - star.yPos * size,
           );
           if (dist < 12) {
-            planetariumCanvasContext.save();
-            planetariumCanvasContext.font = "bold 10px sans-serif";
-            planetariumCanvasContext.textAlign = "left";
-            planetariumCanvasContext.textBaseline = "middle";
-            planetariumCanvasContext.strokeStyle = toRgb(theme.labelStroke);
-            planetariumCanvasContext.lineWidth = 3;
-            planetariumCanvasContext.fillStyle = toRgb(theme.starLabel);
-            planetariumCanvasContext.strokeText(
+            drawStarLabel(
+              planetariumCanvasContext,
               star.name,
-              star.xPos * size + 7,
+              star.xPos * size,
               star.yPos * size,
+              { font: "bold 10px sans-serif" },
             );
-            planetariumCanvasContext.fillText(
-              star.name,
-              star.xPos * size + 7,
-              star.yPos * size,
-            );
-            planetariumCanvasContext.restore();
           }
         }
       }
@@ -883,24 +1015,13 @@ const sketch = () => {
       // Show name of the searched star
       if (params.searchStar !== SEARCH_NONE && starsByName[params.searchStar]) {
         const star = starsByName[params.searchStar];
-        planetariumCanvasContext.save();
-        planetariumCanvasContext.font = "bold 11px sans-serif";
-        planetariumCanvasContext.textAlign = "left";
-        planetariumCanvasContext.textBaseline = "middle";
-        planetariumCanvasContext.strokeStyle = toRgb(theme.labelStroke);
-        planetariumCanvasContext.lineWidth = 3;
-        planetariumCanvasContext.fillStyle = toRgb(theme.starLabel);
-        planetariumCanvasContext.strokeText(
+        drawStarLabel(
+          planetariumCanvasContext,
           star.name,
-          star.xPos * size + 7,
+          star.xPos * size,
           star.yPos * size,
+          { font: "bold 11px sans-serif" },
         );
-        planetariumCanvasContext.fillText(
-          star.name,
-          star.xPos * size + 7,
-          star.yPos * size,
-        );
-        planetariumCanvasContext.restore();
       }
     }
 
