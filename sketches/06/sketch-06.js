@@ -2,7 +2,7 @@ const canvasSketch = require("canvas-sketch");
 const tweakPane = require("tweakpane");
 const TweakpaneSearchListPlugin = require("tweakpane-plugin-search-list");
 
-const constellationsData = require("./constellations_v3.json");
+const constellationsData = require("./constellations.json");
 
 const settings = {
   dimensions: [2160, 1080],
