@@ -5,7 +5,7 @@ const TweakpaneSearchListPlugin = require("tweakpane-plugin-search-list");
 const constellationsData = require("./constellations_v3.json");
 
 const settings = {
-  dimensions: [1080, 1080],
+  dimensions: [2160, 1080],
   animate: true,
 };
 
@@ -233,6 +233,8 @@ const params = {
   searchStar: SEARCH_NONE,
   // Theme
   theme: "blue",
+  // View
+  viewScale: "sky",
 };
 
 // ─── Pane ──────────────────────────────────────────────────────────────────
@@ -250,6 +252,10 @@ pane.addInput(params, "showConstellationLines", {
 pane.addInput(params, "showStarNames", {
   label: "Show star names",
   options: starNameOptions,
+});
+pane.addInput(params, "viewScale", {
+  label: "View scale",
+  options: { "Sky view": "sky", "1:1": "1:1" },
 });
 
 // ─── State: intervals and bindings ─────────────────────────────────────────
@@ -584,10 +590,14 @@ let canvasListenerAttached = false;
 
 const sketch = () => {
   return ({ context, width, height, time }) => {
-    // Set secondary plantarium size at 1.9x to match drawImage scale (avoids upscale blur)
-    planetariumCanvas.width = Math.round(width * 1.9);
-    planetariumCanvas.height = Math.round(height * 1.9);
-    planetariumCanvasContext.scale(1.9, 1.9);
+    // Use the smaller dimension as the base so the star circle stays circular
+    // on non-square canvases (e.g. 2160×1080). xOffset centres it horizontally.
+    const isSkyView = params.viewScale === "sky";
+    const size = Math.min(width, height);
+    const xOffset = (width - size) / 2;
+    planetariumCanvas.width = Math.round(size * (isSkyView ? 1.9 : 1));
+    planetariumCanvas.height = Math.round(size * (isSkyView ? 1.9 : 1));
+    if (isSkyView) planetariumCanvasContext.scale(1.9, 1.9);
 
     // Attach mouse/touch listeners once so we can track hover/touch position
     if (!canvasListenerAttached) {
@@ -644,23 +654,26 @@ const sketch = () => {
     // radGradient.addColorStop(1, "DarkBlue");
     // context.fillStyle = radGradient;
 
+    // Fill the main canvas margins (outside the star-map square) with bg colour.
+    context.fillStyle = toRgb(theme.background);
+    context.fillRect(0, 0, width, height);
     planetariumCanvasContext.fillStyle = toRgb(theme.background);
-    planetariumCanvasContext.fillRect(0, 0, width, height);
+    planetariumCanvasContext.fillRect(0, 0, size, size);
 
     // Planetarium grid
     // Create circles and lines for sky map
     if (params.showGrid) {
-      const centerX = width / 2;
-      const centerY = height / 2;
-      const firstCircleRadius = width / 12.2;
-      const lastCircleRadius = (width / 12.2) * 6;
+      const centerX = size / 2;
+      const centerY = size / 2;
+      const firstCircleRadius = size / 12.2;
+      const lastCircleRadius = (size / 12.2) * 6;
 
       for (let i = 0; i < 6; i++) {
         planetariumCanvasContext.beginPath();
         planetariumCanvasContext.arc(
           centerX,
           centerY,
-          (width / 12.2) * (i + 1),
+          (size / 12.2) * (i + 1),
           0,
           Math.PI * 2,
         );
@@ -727,12 +740,12 @@ const sketch = () => {
 
             planetariumCanvasContext.beginPath();
             planetariumCanvasContext.moveTo(
-              startStar.xPos * width,
-              startStar.yPos * height,
+              startStar.xPos * size,
+              startStar.yPos * size,
             );
             planetariumCanvasContext.lineTo(
-              endStar.xPos * width,
-              endStar.yPos * height,
+              endStar.xPos * size,
+              endStar.yPos * size,
             );
             planetariumCanvasContext.lineWidth = 1;
             planetariumCanvasContext.strokeStyle = toRgb(
@@ -754,8 +767,8 @@ const sketch = () => {
         // magnitude = apparent magnitude (m); lower m = bigger/brighter star
         const pixelmagnitude = Math.max(0.5, (6.5 - magnitude) * 1.5);
         planetariumCanvasContext.arc(
-          xPos * width,
-          yPos * height,
+          xPos * size,
+          yPos * size,
           pixelmagnitude * (0.45 + blinkAmount * 0.25),
           0,
           Math.PI * 2,
@@ -772,13 +785,10 @@ const sketch = () => {
         params.showConstellationName ||
         constellation.name === params.searchConstellation
       ) {
-        const centerX = ((bounds.minX + bounds.maxX) * width) / 2;
-        const centerY = ((bounds.minY + bounds.maxY) * height) / 2;
-        const textAngle = Math.atan2(centerY - height / 2, centerX - width / 2);
-        const textRadius = Math.hypot(
-          centerX - width / 2,
-          centerY - height / 2,
-        );
+        const centerX = ((bounds.minX + bounds.maxX) * size) / 2;
+        const centerY = ((bounds.minY + bounds.maxY) * size) / 2;
+        const textAngle = Math.atan2(centerY - size / 2, centerX - size / 2);
+        const textRadius = Math.hypot(centerX - size / 2, centerY - size / 2);
 
         const boundsSpan = Math.hypot(
           bounds.maxX - bounds.minX,
@@ -797,8 +807,8 @@ const sketch = () => {
         drawTextOnArc(
           planetariumCanvasContext,
           constellation.name.toUpperCase(),
-          width / 2,
-          height / 2,
+          size / 2,
+          size / 2,
           textRadius,
           textAngle,
         );
@@ -816,28 +826,36 @@ const sketch = () => {
           planetariumCanvasContext.fillStyle = toRgb(theme.starLabel);
           planetariumCanvasContext.strokeText(
             star.name,
-            star.xPos * width + 7,
-            star.yPos * height,
+            star.xPos * size + 7,
+            star.yPos * size,
           );
           planetariumCanvasContext.fillText(
             star.name,
-            star.xPos * width + 7,
-            star.yPos * height,
+            star.xPos * size + 7,
+            star.yPos * size,
           );
           planetariumCanvasContext.restore();
         }
       }
 
       // Paint star name on hover
-      // drawImage places the secondary canvas at dx=-0.45*width, dy=-0.88*height at scale 1.9,
-      // so the inverse mapping to secondary canvas logical coords is:
+      // In sky mode the secondary canvas is offset and scaled by drawImage, so we
+      // must invert that transform to find the logical coord under the cursor.
+      // In 1:1 mode the secondary canvas maps directly to screen coords.
       if (params.showStarNames === "on_hover") {
-        const logMouseX = (mousePos.x + 0.45 * width) / 1.9;
-        const logMouseY = (mousePos.y + 0.88 * height) / 1.9;
+        // Invert the drawImage transform to find the secondary-canvas logical
+        // coordinate under the cursor. Sky: dx=(width-size*1.85)/2, scale=1.85.
+        // 1:1: secondary canvas placed at (xOffset, 0) at scale 1.
+        const logMouseX = isSkyView
+          ? (mousePos.x - width / 2) / 1.85 + size / 2
+          : mousePos.x - xOffset;
+        const logMouseY = isSkyView
+          ? (mousePos.y + size * 0.85) / 1.85
+          : mousePos.y;
         for (const star of Object.values(starsByName)) {
           const dist = Math.hypot(
-            logMouseX - star.xPos * width,
-            logMouseY - star.yPos * height,
+            logMouseX - star.xPos * size,
+            logMouseY - star.yPos * size,
           );
           if (dist < 12) {
             planetariumCanvasContext.save();
@@ -849,13 +867,13 @@ const sketch = () => {
             planetariumCanvasContext.fillStyle = toRgb(theme.starLabel);
             planetariumCanvasContext.strokeText(
               star.name,
-              star.xPos * width + 7,
-              star.yPos * height,
+              star.xPos * size + 7,
+              star.yPos * size,
             );
             planetariumCanvasContext.fillText(
               star.name,
-              star.xPos * width + 7,
-              star.yPos * height,
+              star.xPos * size + 7,
+              star.yPos * size,
             );
             planetariumCanvasContext.restore();
           }
@@ -874,37 +892,38 @@ const sketch = () => {
         planetariumCanvasContext.fillStyle = toRgb(theme.starLabel);
         planetariumCanvasContext.strokeText(
           star.name,
-          star.xPos * width + 7,
-          star.yPos * height,
+          star.xPos * size + 7,
+          star.yPos * size,
         );
         planetariumCanvasContext.fillText(
           star.name,
-          star.xPos * width + 7,
-          star.yPos * height,
+          star.xPos * size + 7,
+          star.yPos * size,
         );
         planetariumCanvasContext.restore();
       }
     }
 
     // Paint the planetary canvas in the main canvas
-    // Big scale
-    context.drawImage(
-      planetariumCanvas,
-      (width - width * 1.85) / 2,
-      -height * 0.85,
-      width * 1.85,
-      height * 1.85,
-    );
-    // Scale 1:1
-    //context.drawImage(planetariumCanvas, 0, 0, width, height);
+    if (isSkyView) {
+      // Centre the square map horizontally; maintain the original y crop.
+      context.drawImage(
+        planetariumCanvas,
+        (width - size * 1.85) / 2,
+        -size * 0.85,
+        size * 1.85,
+        size * 1.85,
+      );
+    } else {
+      // Place the square map centred in the wide canvas.
+      context.drawImage(planetariumCanvas, xOffset, 0, size, size);
+    }
   };
 };
 
 canvasSketch(sketch, settings);
 
 /* TODOs  
-- Theming Tweakpane with the theme
-- Allow changing scale between 1:1 and current visible sky
 - Paint horizon ??? (need hours??)
 - Default starting options
 - Exporting to html
