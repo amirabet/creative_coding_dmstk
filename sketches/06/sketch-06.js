@@ -58,6 +58,17 @@ const themes = {
     labelStroke: { r: 255, g: 255, b: 255 },
     starLabel: { r: 20, g: 20, b: 80 },
   },
+  elegant: {
+    background: { r: 10, g: 20, b: 40 }, // deep dark navy
+    grid: { r: 38, g: 72, b: 110 }, // muted steel blue
+    constellationLine: { r: 190, g: 155, b: 65 }, // antique gold
+    starStroke: { r: 220, g: 200, b: 140 }, // warm gold
+    starDimColor: { r: 160, g: 130, b: 60 }, // dim amber gold
+    starBrightColor: { r: 248, g: 244, b: 228 }, // warm cream white
+    constellationLabel: { r: 210, g: 175, b: 80 }, // golden yellow
+    labelStroke: { r: 10, g: 20, b: 40 }, // deep navy (matches bg)
+    starLabel: { r: 235, g: 225, b: 190 }, // soft warm white
+  },
 };
 
 // Current applied theme
@@ -815,5 +826,5 @@ canvasSketch(sketch, settings);
 - Paint horizon ??? (need hours??)
 - Default starting options
 - Exporting to html
-- Embedding into any webpage
+- Embedding into any webpage via JS
 */
