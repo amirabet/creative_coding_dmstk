@@ -1146,7 +1146,10 @@ const sketch = ({ canvas }) => {
 canvasSketch(sketch, settings);
 
 /* TODOs  
-- Add a "fork me on github" label to all demos
 - Embedding into any webpage via JS (plugin)
-
+- Create dedicated repo
+- Add a "fork me on github" label to all demos
+- Annunciate
+	- https://www.reddit.com/r/Astronomy/comments/1l10ctd/i_created_a_star_map_of_the_northern_hemisphere/#lightbox
+	- Find other pages where it can be interesting
 */
