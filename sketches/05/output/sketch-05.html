@@ -4455,12 +4455,14 @@ Better rank ordering method by Stefan Gustavson in 2012.
 
               // Make a canvas-skecth call async
               const start = async () => {
-                await loadSomeImage(imageUrl).then((img) => {
-                  loadedImg = img;
-                  console.log(loadedImg.src);
-                }).catch(() => {
-                  console.warn('Image not found, falling back to text mode.');
-                });
+                await loadSomeImage(imageUrl)
+                  .then((img) => {
+                    loadedImg = img;
+                    console.log(loadedImg.src);
+                  })
+                  .catch(() => {
+                    console.warn("Image not found, falling back to text mode.");
+                  });
                 manager = await canvasSketch(sketch, settings);
               };
               start();
