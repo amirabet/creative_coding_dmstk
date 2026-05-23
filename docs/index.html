@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Creative Coding — Domestika</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: system-ui, sans-serif;
+        background: #0d1117;
+        color: #e6edf3;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 64px 24px;
+        gap: 48px;
+      }
+
+      header {
+        text-align: center;
+      }
+      header h1 {
+        font-size: 1.75rem;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+      }
+      header p {
+        margin-top: 8px;
+        color: #8b949e;
+        font-size: 0.9rem;
+      }
+
+      ol {
+        list-style: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+        width: 100%;
+        max-width: 960px;
+      }
+
+      li {
+        background: #161b22;
+        border: 1px solid #30363d;
+        border-radius: 8px;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .num {
+        font-size: 0.75rem;
+        color: #8b949e;
+        font-variant-numeric: tabular-nums;
+      }
+      .name {
+        font-size: 1rem;
+        font-weight: 600;
+      }
+      .desc,
+      .desc a {
+        font-size: 0.85rem;
+        color: #8b949e;
+        line-height: 1.5;
+        flex: 1;
+      }
+
+      .actions {
+        margin-top: 12px;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      a.btn {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        text-decoration: none;
+        background: #238636;
+        color: #fff;
+        border: 1px solid #2ea043;
+        transition: background 0.15s;
+      }
+      a.btn:hover {
+        background: #2ea043;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Creative Coding — Domestika</h1>
+      <p>Generative art sketches from the course</p>
+    </header>
+
+    <ol>
+      <li>
+        <span class="num">Sketch 01</span>
+        <span class="name">Hello Canvas</span>
+        <span class="desc">Introductory canvas-sketch exercise.</span>
+        <div class="actions">
+          <a class="btn" href="../01_hello.html">Open demo</a>
+        </div>
+      </li>
+
+      <li>
+        <span class="num">Sketch 02</span>
+        <span class="name">Animated Clock</span>
+        <span class="desc"
+          >Animated clock composition using arcs, transforms, and time-based
+          redraws.</span
+        >
+        <div class="actions">
+          <a class="btn" href="../sketches/02/sketch-02.html">Open demo</a>
+        </div>
+      </li>
+
+      <li>
+        <span class="num">Sketch 03</span>
+        <span class="name">Agents &amp; Lines</span>
+        <span class="desc"
+          >Animated agents with vector motion and proximity-based line
+          connections. Also
+          <a href="../sketches/03/output/2026.05.06-16.54.57.mp4"
+            >a video was exported</a
+          >
+          using <em>canvas-skecth</em>.</span
+        >
+        <div class="actions">
+          <a class="btn" href="../sketches/03/output/sketch-03.html"
+            >Open demo</a
+          >
+        </div>
+      </li>
+
+      <li>
+        <span class="num">Sketch 04</span>
+        <span class="name">Noise Grid</span>
+        <span class="desc"
+          >Animated noise-driven line grid with Tweakpane controls.</span
+        >
+        <div class="actions">
+          <a class="btn" href="../sketches/04/output/sketch-04.html"
+            >Open demo</a
+          >
+        </div>
+      </li>
+
+      <li>
+        <span class="num">Sketch 05</span>
+        <span class="name">Typography</span>
+        <span class="desc"
+          >Typography-based experiment using an offscreen canvas and keyboard
+          input.</span
+        >
+        <div class="actions">
+          <a class="btn" href="../sketches/05/output/sketch-05.html"
+            >Open demo</a
+          >
+        </div>
+      </li>
+
+      <li>
+        <span class="num">Sketch 06</span>
+        <span class="name">Planetarium Star Map</span>
+        <span class="desc"
+          >Animated star map with constellation lines, annual sky rotation, and
+          Tweakpane controls.</span
+        >
+        <div class="actions">
+          <a class="btn" href="../sketches/06/docs/index.html">Open demo</a>
+        </div>
+      </li>
+    </ol>
+  </body>
+</html>

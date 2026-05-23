@@ -60,7 +60,19 @@
         margin-top: 12px;
         font-size: 0.95rem;
         letter-spacing: 0.1em;
+      }
+
+      header p b {
         color: rgba(212, 168, 67, 0.75);
+      }
+
+      header p a {
+        color: rgba(212, 168, 67, 0.75);
+        text-decoration: underline;
+      }
+
+      header p a:hover {
+        text-decoration: none;
       }
 
       .divider {
@@ -149,16 +161,38 @@
         font-family: system-ui, sans-serif;
         letter-spacing: 0.08em;
       }
+
+      .github-fork-ribbon:before {
+        background-color: #333;
+      }
     </style>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css"
+    />
   </head>
   <body>
+    <a
+      class="github-fork-ribbon"
+      href="https://github.com/amirabet/html5Canvas_skymap"
+      data-ribbon="Fork me on GitHub"
+      title="Fork me on GitHub"
+      >Fork me on GitHub</a
+    >
     <canvas id="stars"></canvas>
 
     <main>
       <header>
         <h1>HTML5 Canvas Sky Map</h1>
-        <p><b>North Hemisphere version</b><br />Examples Page</p>
+        <p><b>North Hemisphere version</b></p>
         <div class="divider"></div>
+        <p>
+          This project generated
+          <a href="https://github.com/amirabet/html5Canvas_skymap"
+            >it's own repo</a
+          >
+          with more growing features.
+        </p>
       </header>
 
       <div class="grid">

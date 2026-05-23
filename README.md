@@ -4,7 +4,7 @@ Creative Coding Course by DOMESTIKA
 
 [Link to the course](https://www.domestika.org/es/courses/2729-codificacion-creativa-crea-piezas-visuales-con-javascript/course)
 
-This README reflects the next major iteration of the project layout: five sketches, per-sketch npm manifests, and sketch-specific runtime dependencies where needed.
+This README reflects the next major iteration of the project layout: six sketches, per-sketch npm manifests, and sketch-specific runtime dependencies where needed.
 
 ## Project Structure
 
@@ -28,9 +28,16 @@ creative_coding_dmstk/
 │   ├── 04/
 │   │   ├── package.json
 │   │   └── sketch-04.js
-│   └── 05/
+│   ├── 05/
+│   │   ├── package.json
+│   │   └── sketch-05.js
+│   └── 06/
 │       ├── package.json
-│       └── sketch-05.js
+│       ├── sketch-06.js
+│       ├── build.js
+│       ├── constellations.json
+│       ├── configs/
+│       └── docs/
 ```
 
 Each sketch folder is now self-contained enough to install and run independently.
@@ -49,7 +56,11 @@ The root [package.json](package.json) still holds shared course dependencies, bu
 
 ### tweakpane
 
-[tweakpane](https://github.com/cocopon/tweakpane) (`^3.1.10` in Sketch 04 only) — UI controls for interactive parameters in [sketches/04/sketch-04.js](sketches/04/sketch-04.js).
+[tweakpane](https://github.com/cocopon/tweakpane) (`^3.1.10` in Sketches 04 and 06) — UI controls for interactive parameters in [sketches/04/sketch-04.js](sketches/04/sketch-04.js) and [sketches/06/sketch-06.js](sketches/06/sketch-06.js).
+
+### tweakpane-plugin-search-list
+
+[tweakpane-plugin-search-list](https://github.com/nicktindall/tweakpane-plugin-search-list) (`^0.0.10` in Sketch 06 only) — searchable dropdown plugin for Tweakpane, used for the constellation and star search controls in [sketches/06/sketch-06.js](sketches/06/sketch-06.js).
 
 ## Installation
 
@@ -80,6 +91,17 @@ npx canvas-sketch sketch-04.js --open
 
 cd ../05
 npx canvas-sketch sketch-05.js --open
+
+cd ../06
+npx canvas-sketch sketch-06.js --open
+```
+
+Sketch 06 also supports a build step that produces self-contained HTML files:
+
+```bash
+cd sketches/06
+npm run build        # default build → docs/sketch-06.html
+npm run build:all    # one HTML file per config in configs/
 ```
 
 If you are switching between sketches regularly, treat each `sketches/0N/` directory as its own small workspace for install and run commands.
@@ -93,6 +115,7 @@ This will open the sketch in your browser with hot-reloading enabled.
 - Sketch 03: animated agents with vector motion and proximity-based line connections
 - Sketch 04: animated noise-driven line grid with Tweakpane controls
 - Sketch 05: typography-based experiment using an offscreen canvas and keyboard input
+- Sketch 06: animated planetarium star map with constellation lines, annual sky rotation, Tweakpane controls, and a multi-config build system
 
 ## Troubleshooting
 

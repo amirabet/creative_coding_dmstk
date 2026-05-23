@@ -9,6 +9,7 @@
 A browser-based, animated **star map of the northern-hemisphere night sky**, built with [`canvas-sketch`](https://github.com/mattdesl/canvas-sketch) (a creative-coding framework that manages the canvas render loop). It renders 43 constellations and ~269 named stars on a 2160 × 1080 canvas. The sky rotates with the selected day of year, simulating the annual cycle. All runtime controls are exposed through a **Tweakpane** panel embedded in the page.
 
 The sketch can be used in two ways:
+
 - **Dev mode** — live-reloading dev server via `canvas-sketch-cli`
 - **Built mode** — single self-contained HTML file produced by `build.js`
 
@@ -57,11 +58,11 @@ The dev server opens the sketch in a browser with live reload. **Do NOT use `nod
 
 ### Troubleshooting startup
 
-| Symptom | Fix |
-|---|---|
+| Symptom                                                                       | Fix                                                                                 |
+| ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | `ParseError: 'import' and 'export' may appear only with 'sourceType: module'` | Stale Browserify cache. **Restart the dev server** — do not touch package versions. |
-| Blank page / canvas-sketch hangs | Check the browser console; usually a JS runtime error in `sketch-06.js`. |
-| Panel not visible | `CONFIG.showPane` is `false`. Reload after setting it to `true`. |
+| Blank page / canvas-sketch hangs                                              | Check the browser console; usually a JS runtime error in `sketch-06.js`.            |
+| Panel not visible                                                             | `CONFIG.showPane` is `false`. Reload after setting it to `true`.                    |
 
 ---
 
@@ -73,13 +74,15 @@ npm run build:all      # → one docs/*.html per configs/*.json file
 ```
 
 Manual build with overrides:
+
 ```bash
 node build.js --title "Orion" --config configs/orion.json --out orion.html
 ```
 
 **How CONFIG injection works:**
+
 1. `build.js` calls `canvas-sketch-cli --inline` → produces `docs/sketch-06.html` (single-file bundle)
-2. It inserts `<script>window.__SKETCH_CONFIG__ = {...};</script>` *before* the main bundle script
+2. It inserts `<script>window.__SKETCH_CONFIG__ = {...};</script>` _before_ the main bundle script
 3. At runtime, `sketch-06.js` spreads `window.__SKETCH_CONFIG__` at the end of `CONFIG`, overriding any keys present
 4. The `<title>` tag is replaced with `--title` value
 
@@ -95,7 +98,7 @@ The file is structured top-to-bottom as follows. Read sections in order when deb
 
 ```js
 const canvasSketch = require("canvas-sketch");
-const tweakPane = require("tweakpane");          // MUST be ^3.x (CJS/UMD)
+const tweakPane = require("tweakpane"); // MUST be ^3.x (CJS/UMD)
 const TweakpaneSearchListPlugin = require("tweakpane-plugin-search-list");
 const constellationsData = require("./constellations.json");
 
@@ -126,6 +129,7 @@ const CONFIG = {
 ```
 
 **Startup search priority** (enforced by `applyConfigSearch()` which runs once after all Tweakpane bindings are created):
+
 1. `searchStar` wins if non-empty → clears `searchConstellation`, rotates to that star
 2. `searchConstellation` wins if `searchStar` is empty → rotates to constellation centroid RA
 3. `dayOfYear` used if both search fields are empty
@@ -134,7 +138,7 @@ const CONFIG = {
 
 ```js
 const themes = { blue, monochrome, nightmode, light, elegant };
-const theme = { ...(themes[CONFIG.theme] ?? themes.blue) };  // live mutable copy
+const theme = { ...(themes[CONFIG.theme] ?? themes.blue) }; // live mutable copy
 ```
 
 `theme` is a plain object with keys: `background`, `grid`, `constellationLine`, `starStroke`, `starDimColor`, `starBrightColor`, `constellationLabel`, `labelStroke`, `starLabel`. Each value is `{ r, g, b }`.
@@ -152,19 +156,21 @@ The sky is a polar projection centred at the North Celestial Pole (dec = 90°).
 ```js
 const raDecToXY = (ra, dec, rotationOffset) => {
   const angle = (1 - ra / 24) * 2 * Math.PI + rotationOffset;
-  const radius = ((90 - dec) / 90) * 0.45;   // 0.45 keeps stars inside a unit circle of r=0.45
+  const radius = ((90 - dec) / 90) * 0.45; // 0.45 keeps stars inside a unit circle of r=0.45
   const xPos = 0.5 + radius * Math.cos(angle);
   const yPos = 0.5 - radius * Math.sin(angle);
-  return { xPos, yPos };  // normalised 0–1 fractions of `size`
+  return { xPos, yPos }; // normalised 0–1 fractions of `size`
 };
 ```
 
 `rotationOffset` is derived from the selected `dayOfYear`:
+
 ```js
 const DAY_OFFSET_BASE = Math.PI / 2 - (83 / 365.25) * 2 * Math.PI;
 // Day 83 (March 24) → π/2 (calibration anchor)
 
-const rotationOffset = DAY_OFFSET_BASE + (params.dayOfYear / 365.25) * 2 * Math.PI;
+const rotationOffset =
+  DAY_OFFSET_BASE + (params.dayOfYear / 365.25) * 2 * Math.PI;
 ```
 
 ### 5.5 Secondary canvas pattern
@@ -174,14 +180,19 @@ All star/constellation drawing happens on `planetariumCanvas` (an off-screen `<c
 This avoids polluting the main canvas context's state and allows the sky circle to be drawn at a fixed logical size (`size = Math.min(width, height)`) regardless of canvas aspect ratio.
 
 **Sky view** (`viewScale = "sky"`): the planetarium canvas is scaled to `1.9×` and cropped, giving a wide-angle panorama feel:
+
 ```js
-context.drawImage(planetariumCanvas,
-  (width - size * 1.85) / 2, -size * 0.85,   // dx, dy (negative dy crops the top)
-  size * 1.85, size * 1.85                    // dw, dh
+context.drawImage(
+  planetariumCanvas,
+  (width - size * 1.85) / 2,
+  -size * 0.85, // dx, dy (negative dy crops the top)
+  size * 1.85,
+  size * 1.85, // dw, dh
 );
 ```
 
 **1:1 view**: the planetarium canvas is drawn at exact size, centred:
+
 ```js
 context.drawImage(planetariumCanvas, xOffset, 0, size, size);
 ```
@@ -244,13 +255,13 @@ The file is loaded at the top of the script and never mutated.
 
 ## 7. Themes reference
 
-| Key | `background` | Vibe |
-|---|---|---|
-| `blue` | Midnight blue | Classic night sky |
-| `monochrome` | Pure black | Minimal B&W |
-| `nightmode` | Pure black + deep red | Dark-room safe |
-| `light` | White | Print-friendly |
-| `elegant` | Dark navy | Antique gold accents |
+| Key          | `background`          | Vibe                 |
+| ------------ | --------------------- | -------------------- |
+| `blue`       | Midnight blue         | Classic night sky    |
+| `monochrome` | Pure black            | Minimal B&W          |
+| `nightmode`  | Pure black + deep red | Dark-room safe       |
+| `light`      | White                 | Print-friendly       |
+| `elegant`    | Dark navy             | Antique gold accents |
 
 To add a new theme: add an entry to the `themes` object in `sketch-06.js` and add it to the `options` object in the `themePresetBinding` setup. The Tweakpane dropdown will pick it up automatically.
 
@@ -264,6 +275,7 @@ Each file is a partial CONFIG object. Any key not present falls back to the defa
 2. Run `npm run build:all` — it will produce `docs/my-variant.html` automatically
 
 Example:
+
 ```json
 {
   "theme": "nightmode",
@@ -276,12 +288,12 @@ Example:
 
 ## 9. Known issues and workarounds
 
-| Issue | Root cause | Workaround |
-|---|---|---|
-| `ParseError: 'import' and 'export'…` on startup | Stale Browserify dev server cache | Restart `npm start` |
+| Issue                                               | Root cause                                                                      | Workaround                                                                                                    |
+| --------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `ParseError: 'import' and 'export'…` on startup     | Stale Browserify dev server cache                                               | Restart `npm start`                                                                                           |
 | Search-list dropdown doesn't close on outside click | Bug in `tweakpane-plugin-search-list` click-outside handler (logic is inverted) | Patched in `sketch-06.js` via a `mousedown` listener on `document` that removes `data-show` from the open box |
-| Tweakpane v4 ESM parse error | `canvas-sketch-cli` uses Browserify which can't handle ESM | Use `tweakpane ^3.1.10` only |
-| Dropdown arrow styling broken | Tweakpane v3 uses a CSS-only triangle that can't be recoloured | Overridden in `applyPaneTheme()` via `-webkit-appearance: none` + SVG background-image |
+| Tweakpane v4 ESM parse error                        | `canvas-sketch-cli` uses Browserify which can't handle ESM                      | Use `tweakpane ^3.1.10` only                                                                                  |
+| Dropdown arrow styling broken                       | Tweakpane v3 uses a CSS-only triangle that can't be recoloured                  | Overridden in `applyPaneTheme()` via `-webkit-appearance: none` + SVG background-image                        |
 
 ---
 
@@ -298,10 +310,10 @@ Example:
 
 ## 11. Dependency notes
 
-| Package | Version | Notes |
-|---|---|---|
-| `canvas-sketch` | `^0.7.7` | Provides the render loop and canvas-sketch CLI |
-| `tweakpane` | `^3.1.10` | **Must stay on v3.** v4 is ESM-only → breaks Browserify |
+| Package                        | Version   | Notes                                                                                |
+| ------------------------------ | --------- | ------------------------------------------------------------------------------------ |
+| `canvas-sketch`                | `^0.7.7`  | Provides the render loop and canvas-sketch CLI                                       |
+| `tweakpane`                    | `^3.1.10` | **Must stay on v3.** v4 is ESM-only → breaks Browserify                              |
 | `tweakpane-plugin-search-list` | `^0.0.10` | Search dropdown for constellation/star fields; has the click-outside bug noted above |
 
 `canvas-sketch-cli` is the CLI tool (installed globally or via `npx`). It uses **Browserify + esmify** to bundle the sketch. Only CJS/UMD packages work as `require()` targets.
@@ -311,30 +323,34 @@ Example:
 ## 12. Extension guide (how to add things)
 
 ### Add a new theme preset
+
 1. Add a new key to the `themes` object in `sketch-06.js`
 2. The `themePresetBinding` options object is built via `Object.keys(themes)` — no further change needed
 
 ### Add a new CONFIG field
+
 1. Add the key and default value to `CONFIG`
 2. Add a corresponding `pane.addInput(params, "yourKey", {...})` in the appropriate folder
 3. If the field is set via `window.__SKETCH_CONFIG__`, it will be picked up automatically
 
 ### Add a new build config
+
 1. Create `configs/new-variant.json` with partial CONFIG overrides
 2. Run `npm run build:all`
 
 ### Embed in an external page
+
 Set `CONFIG.target` to the `id` of an existing DOM element. The canvas will be appended to it instead of a new wrapper div. The responsive CSS still applies (uses the wrapper element's id).
 
 ---
 
 ## 13. File change impact map
 
-| File changed | Impact |
-|---|---|
-| `sketch-06.js` | Requires `npm start` restart; all logic lives here |
-| `constellations.json` | Data only; changes take effect on next page reload |
-| `build.js` | Build pipeline only; no effect on dev mode |
-| `configs/*.json` | Only affects built output; re-run `npm run build:all` |
-| `docs/template.html` | Changes the HTML shell for all builds; re-run build |
-| `docs/*.html` | Built artifacts; do not edit manually — they will be overwritten |
+| File changed          | Impact                                                           |
+| --------------------- | ---------------------------------------------------------------- |
+| `sketch-06.js`        | Requires `npm start` restart; all logic lives here               |
+| `constellations.json` | Data only; changes take effect on next page reload               |
+| `build.js`            | Build pipeline only; no effect on dev mode                       |
+| `configs/*.json`      | Only affects built output; re-run `npm run build:all`            |
+| `docs/template.html`  | Changes the HTML shell for all builds; re-run build              |
+| `docs/*.html`         | Built artifacts; do not edit manually — they will be overwritten |

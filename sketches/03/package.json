@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "sketch-03.js",
   "scripts": {
+    "build": "canvas-sketch sketch-03.js --build --no-compress --inline --dir output",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
