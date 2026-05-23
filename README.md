@@ -1,8 +1,9 @@
 # creative_coding_dmstk
 
 Creative Coding Course by DOMESTIKA
-
 [Link to the course](https://www.domestika.org/es/courses/2729-codificacion-creativa-crea-piezas-visuales-con-javascript/course)
+
+[Index of all exercises](https://amirabet.github.io/creative_coding_dmstk/) of the course's lesosns
 
 This README reflects the next major iteration of the project layout: six sketches, per-sketch npm manifests, and sketch-specific runtime dependencies where needed.
 
